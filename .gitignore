@@ -367,7 +367,6 @@ gradle-app.setting
 
 #application-secure
 application-secure.yml
-application.yml
 
 google_sheet_api/
 
