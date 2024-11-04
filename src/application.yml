@@ -1,0 +1,70 @@
+server:
+  port: 8080 # 서버가 사용할 포트 번호 설정
+  servlet:
+    encoding:
+      charset: utf-8 # 서블릿의 응답과 요청 인코딩을 UTF-8로 설정
+      force: true # 요청과 응답에 대해 이 인코딩을 강제로 사용하도록 설정
+  error:
+    whitelabel:
+      enabled: true   # 뷰 렌더링 오류 활성화 여부
+
+spring:
+  profiles:
+    active: default, secure, mongo
+    include: secure
+  devtools:
+    livereload:
+      enabled: true # 라이브 리로드 활성화
+    restart:
+      enabled: true # 개발 도구 재시작 활성화
+  servlet:
+    multipart:
+      max-file-size: 20MB #파일 최대 크기 20MB
+      max-request-size: 20MB #멀티파트 전체 요청 크기 20MB제한
+
+  mustache:
+    servlet:
+      expose-session-attributes: true # Mustache 템플릿에서 세션 속성에 접근할 수 있도록 허용
+      expose-request-attributes: true # Mustache 템플릿에서 요청 속성에 접근할 수 있도록 허용
+    prefix: file:src/main/resources/templates/ # Mustache 템플릿 위치
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver # MySQL driver 
+    url: jdbc:mysql://192.168.0.46/damoa?serverTimezone=Asia/Seoul
+    username: jms1 # 데이터베이스 연결 시 기본 사용자 이름
+    password: 1234
+  sql:
+    init:
+      schema-locations:
+        - classpath:db/table.sql
+      data-locations:
+        - classpath:db/data.sql
+  h2:
+    console:
+      enabled: true # H2 데이터베이스 콘솔을 활성화 한다.
+  web:
+    resources:
+      static-locations:
+        - classpath:/static/ # 애플리케이션의 resources/static 디렉토리에서 정적 자원을 찾습니다.
+
+  output:
+    ansi:
+      enabled: always # 콘솔 출력에 ANSI 코드를 사용할 수 있도록 설정
+
+# MyBatis 설정
+mybatis:
+  mapper-locations:
+    - classpath:mapper/**/*.xml #myBatis 매퍼 파일 위치를 설정
+    # **은 모든 디렉터리를 의미, *.xml은 모든 xml 파일을 의미
+  configuration:
+    map-underscore-to-camel-case: true # 데이터베이스의 언더 스코어 네이밍을 카멜 케이스로 자동 매핑
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl # SQL 로깅 구현체 설정
+
+logging:
+  level:
+    org.apache.ibatis: DEBUG # myBatis 로깅 레벨을 DEBUG로 설정하여 실행되는 SQL쿼리와 내부 로깅 정보를 콘솔에 출력
+
+# 초기 파라메터 설정
+file:
+  upload-dir-ad: C:\spring_jpa_work_class\spring_damoa\src\main\resources\static\images\ad/
+  upload-dir-sign: C:\Users\KDP\IdeaProjects\Damoa\src\main\resources\static\images\signs/
