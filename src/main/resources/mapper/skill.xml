@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.damoa.repository.interfaces.SkillRepository">
+
+    <select id="selectAllSkill" resultType="com.damoa.repository.model.Skill">
+        select * from skill_tb
+    </select>
+
+    <select id="selectSkillsByName" resultType="com.damoa.repository.model.Skill">
+        select * from skill_tb where name = #{name}
+    </select>
+
+    <insert id="addProjectSkillData" parameterType="com.damoa.repository.model.Skill">
+        insert into project_skills_tb (project_id, company_id, skill_id) values (#{projectId},#{userId},#{skill})
+    </insert>
+
+
+    <select id="findProjectSkillById" resultType="string">
+        select s.name
+        from project_skills_tb as ps
+        join skill_tb as s
+        where ps.skill_id = s.id
+        and ps.project_id = #{project_id}
+        limit 2
+    </select>
+
+</mapper>

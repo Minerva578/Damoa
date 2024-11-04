@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+        namespace="com.damoa.repository.interfaces.UserRepository">
+
+    <insert id="insertUser">
+        INSERT INTO user_tb(email, username, password, phone_number, social_type, user_type, created_at)
+        VALUES(#{email}, #{username}, #{password}, #{phoneNumber}, #{socialType}, #{userType}, now())
+    </insert>
+
+    <select id="checkDuplicateEmail" resultType="int">
+        SELECT count(*) FROM user_tb WHERE email = #{email}
+    </select>
+
+    <select id="findDuplicatePhoneNumber" resultType="int">
+        SELECT count(*) FROM user_tb WHERE phone_number = #{phoneNumber}
+    </select>
+
+    <select id="findByEmail">
+        SELECT * FROM user_tb WHERE email = #{email}
+    </select>
+
+    <select id="findById">
+        select * from user_tb where id = #{id}
+    </select>
+
+    <insert id="insertDeleteUser">
+        INSERT INTO delete_user (id, email, username, password, phone_number, social_type, user_type, created_at,
+        deleted_at, delete_scheduled_at)
+        VALUES (#{id}, #{email}, #{username}, #{password}, #{phoneNumber}, #{socialType}, #{userType}, #{createdAt},
+        NOW(), DATE_ADD(NOW(), INTERVAL 3 YEAR))
+    </insert>
+
+    <delete id="deleteUser">
+        DELETE FROM user_tb WHERE id = #{userId}
+    </delete>
+
+    <update id="updateUser">
+        UPDATE user_tb
+        SET username = #{username}
+        WHERE id = #{id}
+    </update>
+
+    <!-- 월별 회원가입 수 -->
+    <select id="getMonthlyRegisterData" resultType="com.damoa.dto.user.MonthlyRegisterDTO">
+        SELECT DATE_FORMAT(created_at, '%Y-%m') AS month, COUNT(*) AS count
+        FROM user_tb
+        GROUP BY DATE_FORMAT(created_at, '%Y-%m')
+    </select>
+
+    <!-- 결제내역   -->
+    <select id="findPaymentDetailByUserId" resultType="com.damoa.dto.TossHistoryDTO">
+        SELECT * FROM toss_history_tb WHERE user_id = #{userId}
+        LIMIT #{pageSize} OFFSET #{offset}
+    </select>
+
+    <!-- 업데이트 토스 히스토리 상태   -->
+    <update id="updateStatus">
+        UPDATE toss_history_tb SET status = 1 WHERE id = #{id}
+    </update>
+    <!-- 사용자 ID로 사용자 정보 조회 -->
+    <select id="findUserById" parameterType="int" resultType="com.damoa.dto.user.PrincipalDTO">
+        SELECT *
+        FROM user_tb
+        WHERE id = #{id}
+    </select>
+
+    <!-- @relation GoogleSheetsService 유저 PK 이름 조회 -->
+    <select id="findByUserName">
+        select * from user_tb where username = #{userName}
+    </select>
+
+    <select id="findAd" resultType="com.damoa.dto.admin.AdDTO">
+        SELECT *
+        FROM ad_tb
+        WHERE CURDATE() BETWEEN start_time AND end_time and end_time > curdate()
+    </select>
+    <select id="checkPoint" resultType="int">
+        SELECT point FROM user_tb WHERE id = #{id}
+    </select>
+
+    <!-- 마이 페이지 페이먼트 카운트-->
+    <select id="countMyPayment" resultType="int">
+        SELECT COUNT(*) FROM toss_history_tb
+        WHERE user_id = #{id}
+    </select>
+
+    <!-- alert_tb에 인서트 구문-->
+    <select id="insertByPaymentIdAndUserId">
+        INSERT INTO alert_tb(user_id, payment_id)
+        VALUES(#{userId}, #{paymentId})
+    </select>
+
+    <select id="findRefundRequest" resultType="com.damoa.dto.user.AlertDTO">
+        SELECT u.username,u.user_type, t.amount, a.created_at, a.checked
+        FROM alert_tb AS a
+        JOIN user_tb AS u ON a.user_id = u.id
+        JOIN toss_history_tb AS t ON t.id = a.payment_id
+    </select>
+    <select id="countRequestRefund">
+        SELECT count(*)
+        FROM alert_tb AS a
+        JOIN user_tb AS u ON a.user_id = u.id
+        JOIN toss_history_tb AS t ON t.id = a.payment_id
+        WHERE a.checked = 'X'
+    </select>
+    <update id="updateUserPoints">
+        update user_tb
+        set point = point - 10000
+        where id = #{id}
+    </update>
+</mapper>

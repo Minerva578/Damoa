@@ -1,0 +1,15 @@
+{{>layout/header}}
+<h1>전자 서명 목록</h1>
+
+<div class="sign-board">
+    <div class="sign-container">
+        {{#signList}}
+            <div class="sign-box">
+                <p>{{name}}</p>
+                <img src="{{fileName}}" alt="서명 이미지">
+            </div>
+        {{/signList}}
+    </div>
+    <button onclick="location.href='/sign'">서명 등록하기</button>
+</div>
+{{>layout/footer}}

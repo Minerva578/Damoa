@@ -1,0 +1,189 @@
+{{>layout/header}}
+<style type="text/css">
+    .body {
+        background: #DEDEDE;
+    }
+    .job-kind {
+        padding: 10px;
+        cursor: pointer; /* 마우스 포인터 커서로 변경 */
+    }
+    .job-kind.selected {
+        background-color: #a0a0a0; /* 선택된 배경색 */
+    }
+    .project-container {
+        display: flex;
+        width: 1000px; /* 중앙 정렬을 위해 너비 설정 */
+        margin: 20px auto; /* 자동 여백으로 중앙 정렬 */
+        flex-wrap: wrap;
+    }
+    .project-list-item {
+        width: 25%; /* 너비 설정 */
+        height: 350px; /* 균일한 높이 설정 */
+        padding: 10px;
+        margin: 20px -5px;
+        background: white;
+        border-radius: 10px;
+        transition: background 0.2s; /* 마우스 오버 시 애니메이션 */
+        display: flex; /* Flexbox 사용 */
+        flex-direction: column; /* 세로 방향으로 배치 */
+        justify-content: space-evenly; /* 내용 간 간격을 동일하게 조정 */
+        align-items: left;
+        box-sizing: border-box; /* 패딩을 포함한 크기 계산 */
+        transition: transform 0.2s ease, box-shadow 0.2s ease; /* 부드러운 전환 추가 */
+    }
+    .project-list-item:hover {
+        transform: translateY(-3px); /* 위로 살짝 이동 */
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* 약한 그림자 효과 */
+    }
+    .project-info {
+        margin-bottom: 10px; /* 정보 간 간격 설정 */
+    }
+    .project-job {
+        font-weight: bold; /* 직무 강조 */
+    }
+    .page-nation {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+    }
+    .page-nation button {
+        margin: 0 5px;
+    }
+
+    /* 셀렉트 박스 스타일 */
+    .form-select {
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background-color: #fff;
+        transition: border 0.3s ease;
+        margin-right: 10px;
+        appearance: none; /* 기본 화살표 제거 */
+        background-image: url('data:image/svg+xml;charset=utf8,%3Csvg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="gray" class="bi bi-chevron-down" viewBox="0 0 16 16"%3E%3Cpath fill-rule="evenodd" d="M1.5 5.5a.5.5 0 0 1 .707 0L8 10.293l5.793-4.793a.5.5 0 0 1 .707.707l-6 6a.5.5 0 0 1-.707 0l-6-6a.5.5 0 0 1 0-.707z"/%3E%3C/svg%3E'); /* 화살표 추가 */
+        background-repeat: no-repeat;
+        background-position: right 10px center;
+        background-size: 16px; /* 화살표 크기 */
+    }
+
+    .form-select:focus {
+        border-color: #007bff; /* 포커스 시 테두리 색상 변경 */
+        outline: none; /* 포커스 아웃라인 제거 */
+    }
+</style>
+
+<h3>프로젝트 목록 ({{totalProjectNum}})</h3>
+<p>프로젝트를 찾고 매칭해보세요</p>
+
+<div class="search-div">
+    <div class="minor-class" style="margin-right: 20px;">
+        <select name="workingType" onchange="sendData()" class="form-select">
+            <option value="all" selected disabled hidden>근무 방식</option>
+            <option value="1">원격 근무</option>
+            <option value="2">상주 근무</option>
+            <option value="3">원격 상주 모두</option>
+        </select>
+        <select name="workingAddress" onchange="sendData()" class="form-select">
+            <option selected disabled hidden>직무</option>
+            <option value="1">풀스택</option>
+            <option value="2">프론트엔드</option>
+            <option value="3">백엔드</option>
+            <option value="4">서버</option>
+            <option value="5">데브옵스</option>
+            <option value="6">데이터</option>
+            <option value="7">AI</option>
+            <option value="8">임베디드</option>
+            <option value="9">미들웨어</option>
+            <option value="10">웹 퍼블리싱</option>
+            <option value="11">안드로이드</option>
+            <option value="12">IOS</option>
+        </select>
+        <select name="projectStatus" onchange="sendData()" class="form-select">
+            <option selected disabled hidden>진행 상황</option>
+            <option value="1">기획단계</option>
+            <option value="2">기획서가 준비되어 있음</option>
+            <option value="3">이미 프로젝트가 진행 중임</option>
+        </select>
+    </div>
+</div>
+
+<div class="project-container">
+    {{#projectListForPaging}}
+        <div class="project-list-item" onclick="location.href='/project/detail/{{id}}'">
+            <img src="/images/logos/sample-img.png" style="margin-bottom: 10px; cursor:pointer; border-radius: 10px;">
+            <h6 style="width: 95%; color: #495057;"><b>{{projectName}}</b></h6>
+            <h6 style="color: gray;">{{job}}</h6>
+            <p style="color: gray;">{{userName}}</p>
+
+                <div style="display: flex;">
+                    {{#skill}}
+                        <div style="width:90px; height: 30px; display: flex; justify-content:center; align-items: center; background: #f1f3f5; margin:5px; border-radius: 15px;">
+                            {{.}}
+                        </div>
+                    {{/skill}}<!-- Outputs the current skill -->
+                </div>
+
+        </div>
+    {{/projectListForPaging}}
+</div>
+
+<div class="page-nation" id="page-nation">
+    <button id="before" class="btn btn-light" onclick="beforePage(currentPage - 1)">이전</button>
+    {{#totalPageNum }}
+        <button class="btn btn-light" onclick="goToPage(this)" value="{{this}}">{{this}}</button>
+    {{/totalPageNum}}
+    <button id="next" class="btn btn-light" onclick="beforePage(currentPage + 1)">다음</button>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        // sendData 함수를 전역으로 선언
+        window.sendData = function() {
+            var workingType = $('select[name="workingType"]').val();
+            var workingAddress = $('select[name="workingAddress"]').val();
+            var projectStatus = $('select[name="projectStatus"]').val();
+
+            $.ajax({
+                url: '/project/send-fetched-data',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    'workType': workingType,
+                    'address': workingAddress,
+                    'progress': projectStatus,
+                }),
+                success: function(data) {
+                    updateProjectList(data);
+                },
+            });
+        };
+
+        // 셀렉트 박스의 change 이벤트에 sendData 함수 연결
+        $('.minor-class select').change(sendData);
+    });
+
+    function updateProjectList(projects) {
+        var projectContainer = $('.project-container');
+        projectContainer.empty(); // 기존 내용 비우기
+
+        if (projects.length === 0) {
+            projectContainer.append('<p>해당하는 프로젝트가 없습니다.</p>'); // 프로젝트가 없을 경우 메시지 추가
+            return;
+        }
+
+        $.each(projects, function(index, project) {
+            var projectItem = $(`
+                <div class="project-list-item" onclick="location.href='/project/detail/${project.id}'">
+                    <img src="/images/logos/sample-img.png" style="height:400px; width: 220px; margin-bottom: 10px; cursor:pointer; border-radius: 10px;">
+                    <h6 style="width: 95%; color: #495057;"><b>${project.projectName}</b></h6>
+                    <h6 style="color: gray;">${project.job}</h6>
+                    <p style="color: gray;">${project.userName}</p>
+                </div>
+            `);
+            projectContainer.append(projectItem);
+        });
+    }
+</script>
+
+
+{{>layout/footer}}

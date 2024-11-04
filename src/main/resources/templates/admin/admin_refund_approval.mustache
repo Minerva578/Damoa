@@ -1,0 +1,131 @@
+{{>admin/admin_header}}
+
+
+<div class="main-board">
+    <h3 class="sub-title" >Refund Management</h3>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th></th>
+            <th>Pay Key</th>
+            <th>결제한 유저 ID</th>
+            <th>주문번호</th>
+            <th>주문내역</th>
+            <th>금액</th>
+            <th>결제 방법</th>
+            <th>요청 시간</th>
+
+        </tr>
+        </thead>
+
+        <tbody>
+        <!-- 환불하기 버튼-->
+        {{#paymentList}}
+            <tr>
+                <td>{{id}}</td>
+                <td>{{paymentKey}}</td>
+                <td>{{userId}}</td>
+                <td>{{orderId}}</td>
+                <td>{{orderName}}</td>
+                <td>{{amount}}</td>
+                <td>{{method}}</td>
+                <td>{{requestedAt}}</td>
+                <td><span id="refund--Btn" data-status="{{status}}"><a href="javascript:void(0)"
+                                                                       onclick="refund({{id}})" class="btn btn-primary">환불하기</a></span>
+                </td>
+            </tr>
+        {{/paymentList}}
+        {{^paymentList}}
+            <tr>
+                <td colspan="8" class="text-center">결제내역이 없습니다</td>
+            </tr>
+        {{/paymentList}}
+        </tbody>
+    </table>
+
+    <!-- 페이지네이션 -->
+    <nav aria-label="Page navigation">
+        <ul class="pagination" id="paginationContainer">
+            {{#prevPage}} <!-- 이전 페이지가 있을 때 -->
+                <li class="page-item">
+                    <a class="page-link" href="?page={{prevPage}}" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+            {{/prevPage}}
+
+            <!-- 페이지 번호 표시 -->
+            <script>
+                const totalPages = {{totalPages}}; // 전체 페이지 수
+                const currentPage = {{currentPage}}; // 현재 페이지 (0-based)
+                const paginationContainer = document.getElementById("paginationContainer");
+
+                // 페이지 번호 링크 생성
+                for (let i = 0; i < totalPages; i++) {
+                    const pageItem = document.createElement("li");
+                    pageItem.className = "page-item" + (i === currentPage ? " active" : ""); // 현재 페이지에 active 클래스 추가
+                    pageItem.innerHTML = `<a class="page-link" href="?page=${i}">${i + 1}</a>`; // 1-based로 표시
+                    paginationContainer.appendChild(pageItem);
+                }
+
+                // 다음 페이지 링크
+                {{#nextPage}}
+                    const nextPageItem = document.createElement("li");
+                    nextPageItem.className = "page-item";
+                    nextPageItem.innerHTML = `<a class="page-link" href="?page={{nextPage}}">다음</a>`;
+                    paginationContainer.appendChild(nextPageItem);
+                {{/nextPage}}
+
+
+
+            </script>
+        </ul>
+    </nav>
+</div>
+</body>
+</html>
+
+<script>
+    window.onload = function() {
+        const refundBtns = document.querySelectorAll('#refund--Btn');
+
+        refundBtns.forEach(refundBtn => {
+            const status = refundBtn.getAttribute('data-status');
+
+            // status 값이 1이면 텍스트를 '환불 신청중'으로 변경하고 클릭 비활성화
+            if (status === '2') {
+                const anchor = refundBtn.querySelector('a');
+                anchor.textContent = '처리 완료';
+                anchor.style.pointerEvents = 'none'; // 클릭 이벤트 비활성화
+                anchor.classList.add('disabled'); // 비활성화 스타일 추가 (선택 사항)
+            }
+        });
+    };
+    function refund(id){
+        if (confirm("정말 환불처리를 하시겠습니까?")) {
+        fetch('http://localhost:8080/toss/refund', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            "id": id,
+        })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('네트워크 오류');
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log("응답:", data);
+        location.reload();
+    })
+
+    .catch(error => {
+        console.error("에러 발생:", error);
+    });
+    }
+}
+</script>

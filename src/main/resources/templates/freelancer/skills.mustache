@@ -1,0 +1,53 @@
+{{> layout/header}}
+
+<div class="container">
+    <!-- 사이드바 -->
+    {{> layout/mypage}}
+
+    <!-- 메인 콘텐츠 -->
+    <div class="main-content">
+        <h1 class="text-center mb-4 font-weight-bold">프리랜서 스킬 스택 관리</h1>
+
+        <div class="main-board">
+            <!-- 프리랜서의 스킬 스택 리스트 -->
+            <div class="card mb-4 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title font-weight-bold">등록된 스킬 스택</h5>
+                    {{#freelancerSkills}}
+                    <ul>
+                        <li>{{name}} 
+                            <form action="/freelancer/delete-skill" method="post">
+                                <input type="hidden" name="skillId" value="{{id}}">
+                                <button type="submit">삭제</button>
+                            </form>
+                        </li>
+                    </ul>
+                    {{/freelancerSkills}}
+                    {{^freelancerSkills}}
+                    <p class="text-muted">등록된 스킬 스택이 없습니다.</p>
+                    {{/freelancerSkills}}
+                </div>
+            </div>
+
+            <!-- 스킬 스택 추가 -->
+            <div class="card mb-4 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title font-weight-bold">스킬 스택 추가</h5>
+                    <div class="form-container">
+                        <form action="/freelancer/insert-skill" method="post">
+                            <label for="skills">추가할 스킬:</label>
+                            <select name="skillId" id="skills">
+                                {{#skills}}
+                                <option value="{{id}}">{{name}}</option>
+                                {{/skills}}
+                            </select>
+                            <button type="submit">추가</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{> layout/footer}}

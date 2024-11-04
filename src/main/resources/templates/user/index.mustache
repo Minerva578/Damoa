@@ -1,0 +1,176 @@
+{{>layout/header}}
+<div id ="chatbot">{{>layout/chatbot}}</div>
+<div id ="chat">{{>layout/chat}}</div>
+<style>
+    body{
+    padding:0;
+    margin: 0;
+    }
+    .freelancer-box h5 b {
+        display: inline-block;
+        width: 100%; /* 또는 원하는 너비 */
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .project-freelancer-container{
+        display: flex;
+    }
+    .slider {
+    width: 100%; /* 전체 너비 */
+    }
+    .project-box, .freelancer-box {
+        width: 20px; /* 각 슬라이드의 너비 */
+        margin: 0 10px; /* 좌우 간격 조정 */
+    }
+    .slick-next, .slick-prev {
+        background: none; /* 배경 제거 */
+        border: none; /* 외곽선 제거 */
+        outline: none; /* 포커스 시 외곽선 제거 */
+        cursor: pointer; /* 커서 스타일 변경 */
+    }
+    .slick-list{
+        display: flex;
+    }
+    .slick-next img, .slick-prev img {
+        display: block; /* 이미지가 버튼의 전체 영역을 차지하도록 */
+    }
+
+
+</style>
+<div class="main-board-box">
+    <div class="ad-board">
+        <div class="ad-bar">
+            <img src="images/icons/left.png" class="icons" id="prevAd" style="cursor: pointer;">
+            <div class="ad-outer">
+                <div class="ad-inner">
+                    {{#ad}}
+                    <img src="/images/ad/{{originFileName}}" class="ad-img" style="width: 850px; height: 350px; box-shadow: 2px 2px 5px #d0ccc9">
+                    {{/ad}}
+                </div>
+            </div>
+            <img src="images/icons/right.png" class="icons" id="nextAd" style="cursor: pointer;">
+        </div>
+        <div class="ad-progress" style="margin-top:20px;">
+            <h6 class="ad-progress-text" >1/5</h6>
+        </div>
+    </div>
+    <div class="freelancer-board project-board main-inner-board">
+        <h3 style="height:42px; margin-left:10px;"><b> 많이 찾는 프로젝트 공고들<img src="images/3d_icons/file.png" style="cursor:pointer;" class="icons" onclick="location.href='/project/list/1'"> ></b></h3>
+        <p style="margin-left:10px;">프로젝트를 시작해볼까요?</p>
+        <div class="project-container slider">
+            {{#projectList}}
+                <div class="project-box" style="margin: 10px; width: 180px;" onclick="location.href='/project/detail/{{id}}'">
+                    <img src="images/logos/sample-img.png" style="border-radius:10px;  box-shadow: 2px 2px 5px #d0ccc9; width: 175px; margin: 10px; cursor:pointer;">
+                    <h6 style="color: #495057; width: 175px; "><b>{{projectName}}</b></h6>
+                    <p>{{company}}</p>
+                </div>
+            {{/projectList}}
+        </div>
+    </div>
+    <div class="project-board main-inner-board">
+        <h3 style="height:33px;"><b>현재 채용 중인 회사들<img src="images/3d_icons/companys.png" style="cursor:pointer;" class="icons" onclick="location.href='/project/list/1'"> ></b></h3>
+        <p style="margin-left:10px;">채용중인 회사들을 확인해보세요</p>
+        <div style="width: 100%; display: flex; justify-content: space-around; align-items: center;">
+            <img src="images/ads/work_ad3.png" class="ad-img" style="box-shadow: 2px 2px 5px #d0ccc9; width:31%;">
+            <img src="images/ads/work_ad2.png" class="ad-img" style="box-shadow: 2px 2px 5px #d0ccc9; width:31%;">
+            <img src="images/ads/work_ad1.png" class="ad-img" style="box-shadow: 2px 2px 5px #d0ccc9; width:31%;">
+        </div>
+    </div>
+    <div class="project-board main-inner-board" >
+        <h3 onclick="location.href='/freelancer/list'" style="height:43px; margin-left:10px;"><b> 현재 핫한 프리랜서 개발자들<img src="/images/3d_icons/human.png" class="icons"> ></b></h3>
+        <p style="margin-left:10px;">함께 프로젝트를 시작해보세요</p>
+        <div class="freelancer-container slider">
+            {{#freelancerList}}
+                <div class="freelancer-box" style="display: column; align-items: center; justify-content: center;" onclick="location.href='/freelancer/detail/{{userId}}'">
+                    <img src="/images/logos/freelancer-icon .png" style="width: 90%; margin-bottom: 20px;  box-shadow: 2px 2px 5px #d0ccc9;background: #f1f3f5; border-radius: 100px; padding: 0px;">
+                    <h5 style="color: #495057"><b>{{username}}</b></h5>
+                    <p>{{jobPart}}</p>
+                </div>
+            {{/freelancerList}}
+        </div>
+    </div>
+</div>
+</div>
+
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css"/>
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
+<script>
+    $(document).ready(function(){
+    // Slick 초기화
+    $('.ad-inner').slick({
+        autoplay: true,
+        autoplaySpeed: 900,
+        speed: 500, // 슬라이드 전환 속도 (밀리초 단위)
+        fade: false, // 페이드 효과를 비활성화
+        dots: false, // 점 버튼 제거
+        arrows: false // 화살표를 직접 설정할 것이므로 기본 화살표 비활성화
+    });
+
+    // 광고 진행 상태 업데이트
+    $('.ad-inner').on('afterChange', function(event, slick, currentSlide){
+        $('.ad-progress-text').text((currentSlide + 1) + '/' + slick.slideCount);
+    });
+
+    // 이전 및 다음 버튼 클릭 이벤트 추가
+    $('.left').click(function() {
+        $('.ad-inner').slick('slickPrev');
+    });
+
+    $('.right').click(function() {
+        $('.ad-inner').slick('slickNext');
+    });
+
+    // 슬라이드 전환 시 애니메이션을 위한 클래스 추가
+    $('.left, .right').on('click', function() {
+        // 현재 슬라이드를 먼저 숨기고
+        $('.ad-inner').addClass('sliding');
+
+        // 슬라이드를 전환한 후 애니메이션 제거
+        setTimeout(function() {
+            $('.ad-inner').removeClass('sliding');
+        }, 300); // 슬라이드 전환 효과와 동일한 시간으로 설정
+    });
+});
+    // 사이드바 토글 기능
+    document.getElementById('toggleChatSidebar').addEventListener('click', function () {
+        const chatbot = document.getElementById('chatbot');
+        const chat = document.getElementById('chat');
+            chatbot.style.display = 'block';
+            chat.style.display = 'none'; // 챗 레이아웃 숨기기
+    });
+
+    // 사이드바 닫기 기능
+    document.getElementById('closeChatSidebar').addEventListener('click', function () {
+        const chatSidebar = document.getElementById('chatbot');
+        const chatLayout = document.getElementById('chat');
+
+        chatLayout.style.display = 'block'; // 챗 레이아웃 보이기
+    });
+
+
+    $(document).ready(function(){
+    // 프로젝트 슬라이더 초기화
+    $('.project-container.slider').slick({
+        slidesToShow: 4, // 한 번에 보여줄 슬라이드 수
+        slidesToScroll: 1,
+        autoplay: true,
+        autoplaySpeed: 1000,
+        dots: false,
+        arrows: false, // 화살표 활성화
+        });
+
+    // 프리랜서 슬라이더 초기화
+    $('.freelancer-container.slider').slick({
+        slidesToShow: 5, // 한 번에 보여줄 슬라이드 수
+        slidesToScroll: 1,
+        autoplay: true,
+        autoplaySpeed: 1000,
+        dots: false,
+        arrows: false, // 화살표 활성화
+         });
+});
+</script>
+
+{{>layout/footer}}

@@ -1,0 +1,48 @@
+{{>layout/header}}
+<style type="text/css">
+    .project-detail-container{
+        width: 100%;
+        display: flex;
+        justify-content: center;
+    }
+    .wait-form{
+        display: none;
+        background: white;
+        border: none;
+        border-radius: 5px;
+        padding: 10px;
+    }
+    .wait-detail{
+        margin: 10px;
+        padding: 30px;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+    }
+    .project-box{
+        width: 90%;
+    }
+    .project-input-form{
+        margin: 5px;
+    }
+</style>
+<h3>프로젝트 상세 보기</h3>
+<div class="project-detail-container">
+    <h1>프로젝트 등</h1>
+</div>
+
+
+
+
+<script>
+    const waitForm = document.getElementById("wait-form");
+    function makeWaitForm() {
+        console.log("Current display:", waitForm.style.display);
+        if (waitForm.style.display === "none" || waitForm.style.display === "") {
+            waitForm.style.display = "flex";
+        } else {
+            waitForm.style.display = "none"; // 다시 숨길 수 있도록 설정
+        }
+    }
+</script>
+{{>layout/footer}}

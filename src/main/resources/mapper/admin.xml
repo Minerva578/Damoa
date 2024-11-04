@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+        namespace="com.damoa.repository.interfaces.AdminRepository">
+
+    <select id="findByUsername">
+        SELECT * FROM admin_tb WHERE username = #{username}
+    </select>
+
+    <!--    전체 유저 목록 가져오기 -->
+    <select id="getAllUser" resultType="com.damoa.repository.model.User">
+        select * from user_tb
+    </select>
+
+    <!--   페이징 처리 및 유저 리스트 가져오기-->
+    <select id="getUserList" resultType="com.damoa.repository.model.User">
+        select * from user_tb limit #{limit} offset #{offset}
+    </select>
+
+    <!--  유저 디테일 가져오기   -->
+    <select id="getUserDetail" resultType="com.damoa.repository.model.User">
+        select * from user_tb where id = #{id}
+    </select>
+
+    <insert id="insertAd">
+        insert into ad_tb(title, origin_file_name, start_time, end_time) values
+        (#{title},#{originFileName},#{startTime},#{endTime})
+    </insert>
+
+    <select id="getAdList" resultType="com.damoa.repository.model.Ad">
+        select * from ad_tb order by id desc limit #{pageSize} offset #{offset}
+    </select>
+
+    <select id="findById" resultType="com.damoa.repository.model.Ad">
+        select * from ad_tb where id = #{id}
+    </select>
+
+    <delete id="deleteAdById">
+        delete from ad_tb where id = #{id}
+    </delete>
+
+    <update id="updateAdById">
+        update ad_tb set title = #{title} where id= #{id}
+    </update>
+
+    <select id="countAd">
+        select count(*) from ad_tb
+    </select>
+
+    <select id="activeAd" resultType="com.damoa.dto.admin.AdDTO">
+        select * from ad_tb where status = 1
+    </select>
+
+    <!-- 유저 카운트 -->
+    <select id="countUser" resultType="int">
+        SELECT COUNT(*) FROM user_tb
+    </select>
+
+    <!-- 어드민 공지 수정 -->
+    <update id="updateNotice">
+        UPDATE notice_tb SET title = #{title} , content = #{content} WHERE id = #{id}
+
+    </update>
+
+    <!-- 어드민 공지 삭제 -->
+    <delete id="deleteNoticeById">
+        DELETE FROM notice_tb WHERE id = #{id}
+    </delete>
+
+    <!-- 어드민 공지 추가 -->
+    <insert id="insertNotice">
+        INSERT INTO notice_tb (type, title, content, created_at) VALUES (1, #{title}, #{content}, now())
+    </insert>
+
+    <!-- 어드민 공지 아이디로 찾기 -->
+    <select id="findNoticeById">
+        SELECT * FROM notice_tb WHERE id = #{id}
+    </select>
+
+    <!-- 공지 수 카운트 -->
+    <select id="countNotice" resultType="int">
+        SELECT COUNT(*) FROM notice_tb
+    </select>
+
+    <!-- 모든 공지 리스트 보기 -->
+    <select id="viewAllNotice">
+        SELECT * FROM notice_tb
+        LIMIT #{pageSize} OFFSET #{offset}
+    </select>
+</mapper>

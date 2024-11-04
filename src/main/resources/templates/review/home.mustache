@@ -1,0 +1,176 @@
+{{> layout/header}}
+
+<style>
+    body {
+        font-family: 'Arial', sans-serif;
+        background-color: #f8f9fa;
+    }
+
+    .sub-header {
+        color: #007BFF;
+        font-size: 1rem;
+    }
+
+    .review-title {
+        color: #007BFF;
+        font-size: 1.25rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .first-banner {
+        width: 100%;
+        height: 270px;
+        object-fit: cover;
+        border-radius: 10px;
+        margin-top: 30px;
+        margin-bottom: 60px;
+    }
+
+    .scroll-container {
+        display: flex;
+        overflow: hidden;
+        width: 100%;
+        position: relative;
+        margin-bottom: 80px;
+    }
+
+    .scroll-content {
+        display: flex;
+        transition: transform 50s linear;
+        animation: scroll 50s linear infinite;
+    }
+
+    @keyframes scroll {
+        0% {
+            transform: translateX(0);
+        }
+        100% {
+            transform: translateX(-50%);
+        }
+    }
+
+    .card {
+        width: 250px;
+        margin-right: 20px;
+        border: none;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-body {
+        background-color: #f8f9fa;
+        border-radius: 15px;
+        text-align: center;
+    }
+
+    .btn-review {
+        background-color: #007BFF;
+        color: white;
+        border-radius: 0 0 15px 15px;
+        transition: background-color 0.3s;
+    }
+
+    .btn-review:hover {
+        background-color: #0056b3;
+    }
+
+    .second-banner {
+        width: 100%;
+        height: 180px;
+        border-radius: 10px;
+        object-fit: cover;
+        margin-bottom: 60px;
+    }
+
+    .third-banner {
+        width: 100%;
+        height: 150px;
+        object-fit: cover;
+        border-radius: 10px;
+        margin-top: 30px;
+        margin-bottom: 60px;
+    }
+</style>
+
+<div class="container mt-4">
+    <img src="/images/banner/review-banner.png" class="first-banner">
+
+    <!-- 기업 리뷰 섹션 -->
+    <section class="mt-4">
+        <img src="/images/banner/company-review-banner.png" class="second-banner">
+        <div class="scroll-container">
+            <div class="scroll-content" id="company-scroll-content">
+                {{#companyReviews}}
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">{{freelancerName}}</h5>
+                            <h6>프리랜서에 대한 리뷰</h6>
+                            <hr>
+                            <div class="card-text" style="font-weight: bold; margin-bottom: 15px;">
+                                종합 별점:
+                                <span class="star-rating" id="companyOverallStars{{id}}"></span>
+                            </div>
+                            <p class="card-text">{{responseData}}</p>
+                        </div>
+                        <button class="btn btn-review btn-block" onclick="location.href='/reviews/list/company'">리뷰 더보기</button>
+                    </div>
+                {{/companyReviews}}
+            </div>
+        </div>
+    </section>
+
+    <img src="/images/banner/freelancer-review-banner.png" class="third-banner">
+
+    <!-- 프리랜서 리뷰 섹션 -->
+    <section class="mt-4">
+        <div class="scroll-container">
+            <div class="scroll-content" id="freelancer-scroll-content">
+                {{#freelancerReviews}}
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">{{companyName}}</h5>
+                            <h6>기업에 대한 리뷰</h6>
+                            <hr>
+                            <div class="card-text" style="font-weight: bold; margin-bottom: 15px;">
+                                종합 별점:
+                                <span class="star-rating" id="freelancerOverallStars{{id}}"></span>
+                            </div>
+                            <p class="card-text">{{responseData}}</p>
+                        </div>
+                        <button class="btn btn-review btn-block" onclick="location.href='/reviews/list/freelancer'">리뷰 더보기</button>
+                    </div>
+                {{/freelancerReviews}}
+            </div>
+        </div>
+    </section>
+</div>
+
+<script>
+    function renderStars(id, score, type) {
+        const totalStars = 5;
+        let starsHtml = '';
+
+        for (let i = 1; i <= totalStars; i++) {
+            if (i <= score) {
+                starsHtml += '<i class="fas fa-star" style="color: #fbcb1c;"></i>'; // 채워진 어두운 노란색 별
+            } else {
+                starsHtml += '<i class="far fa-star" style="color: gray;"></i>'; // 빈 회색 별
+            }
+        }
+
+        // 별 점수를 출력할 요소의 ID에 starsHtml을 삽입
+        document.getElementById(type + 'OverallStars' + id).innerHTML = starsHtml;
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        {{#companyReviews}}
+            renderStars('{{id}}', parseInt("{{overallScore}}") || 0, 'company');
+        {{/companyReviews}}
+        {{#freelancerReviews}}
+            renderStars('{{id}}', parseInt("{{overallScore}}") || 0, 'freelancer');
+        {{/freelancerReviews}}
+    });
+</script>
+
+{{> layout/footer}}

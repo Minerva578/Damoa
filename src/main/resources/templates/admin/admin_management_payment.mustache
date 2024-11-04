@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>결제 관리</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+
+{{>admin/admin_header}}
+
+<div class="main-board">
+    <h3 class="sub-title" >Payment Management</h3>
+
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th></th>
+            <th>Pay Key</th>
+            <th>결제한 유저 ID</th>
+            <th>주문번호</th>
+            <th>주문내역</th>
+            <th>금액</th>
+            <th>결제 방법</th>
+            <th>요청 시간</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <!-- 결제 목록 출력 -->
+        {{#paymentList}}
+            <tr>
+                <td>{{id}}</td>
+                <td>{{paymentKey}}</td>
+                <td>{{userId}}</td>
+                <td>{{orderId}}</td>
+                <td>{{orderName}}</td>
+                <td>{{amount}}</td>
+                <td>{{method}}</td>
+                <td>{{requestedAt}}</td>
+            </tr>
+        {{/paymentList}}
+        {{^paymentList}}
+            <tr>
+                <td colspan="8" class="text-center">결제내역이 없습니다</td>
+            </tr>
+        {{/paymentList}}
+        </tbody>
+    </table>
+
+    <!-- 페이지네이션 -->
+    <nav aria-label="Page navigation">
+        <ul class="pagination" id="paginationContainer">
+            {{#prevPage}} <!-- 이전 페이지가 있을 때 -->
+                <li class="page-item">
+                    <a class="page-link" href="?page={{prevPage}}" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+            {{/prevPage}}
+
+            <!-- 페이지 번호 표시 -->
+            <script>
+                const totalPages = {{totalPages}}; // 전체 페이지 수
+                const currentPage = {{currentPage}}; // 현재 페이지 (0-based)
+                const paginationContainer = document.getElementById("paginationContainer");
+
+                // 페이지 번호 링크 생성
+                for (let i = 0; i < totalPages; i++) {
+                    const pageItem = document.createElement("li");
+                    pageItem.className = "page-item" + (i === currentPage ? " active" : ""); // 현재 페이지에 active 클래스 추가
+                    pageItem.innerHTML = `<a class="page-link" href="?page=${i}">${i + 1}</a>`; // 1-based로 표시
+                    paginationContainer.appendChild(pageItem);
+                }
+
+                // 다음 페이지 링크
+                {{#nextPage}}
+                    const nextPageItem = document.createElement("li");
+                    nextPageItem.className = "page-item";
+                    nextPageItem.innerHTML = `<a class="page-link" href="?page={{nextPage}}">다음</a>`;
+                    paginationContainer.appendChild(nextPageItem);
+                {{/nextPage}}
+
+
+
+
+
+
+            </script>
+        </ul>
+    </nav>
+
+</div>
+
+
+<script>
+    function refund(id) {
+        fetch('http://localhost:8080/toss/refund', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ "id": id })
+        })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('네트워크 오류');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log("응답:", data);
+                    location.reload(); // 성공 시 페이지 새로고침
+                })
+                .catch(error => {
+                    console.error("에러 발생:", error);
+                });
+    }
+</script>
+
+</body>
+</html>

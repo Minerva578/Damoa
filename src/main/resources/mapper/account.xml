@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+    namespace="com.damoa.repository.interfaces.AccountRepository">
+
+    <insert id="addBankAccountReq">
+        INSERT INTO bank_account_req(bank_code_id, account_num, owner_name)
+        VALUES(#{bankCode}, #{accountNo}, #{bankOwner})
+    </insert>
+
+</mapper>

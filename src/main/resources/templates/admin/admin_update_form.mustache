@@ -1,0 +1,75 @@
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+    }
+    .form-container {
+        width: 100%;
+        max-width: 500px;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .form-container h2 {
+        margin-bottom: 20px;
+        color: #333;
+        text-align: center;
+    }
+    .form-group {
+        margin-bottom: 15px;
+    }
+    .form-group label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+    .form-group input, .form-group textarea {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 16px;
+    }
+    .form-group textarea {
+        resize: vertical;
+        height: 100px;
+    }
+    .submit-btn {
+        width: 100%;
+        padding: 10px;
+        background-color: #3498db;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        font-size: 16px;
+        cursor: pointer;
+    }
+    .submit-btn:hover {
+        background-color: #2980b9;
+    }
+</style>
+{{>admin/admin_header}}
+<div class="container mt-5">
+    <h2>공지사항 작성</h2>
+    {{#notice}}
+        <form action="/admin/notice-update/{{id}}" id="noticeForm" method="post">
+            <div class="form-group">
+                <label for="title">제목</label>
+                <input type="text" id="title" name="title" value="{{title}}" required>
+            </div>
+            <div class="form-group">
+                <label for="content">내용</label>
+                <textarea id="content" name="content" required>{{content}}</textarea>
+            </div>
+            <button type="submit" class="submit-btn">수정하기</button>
+        </form>
+    {{/notice}}
+</div>
+
+
+</body>
+</html>

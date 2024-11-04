@@ -1,0 +1,19 @@
+{{>admin/admin_header}}
+<div class="card">
+    <div class="card-body">
+        {{#ad}}
+        <h5 class="card-title">{{title}}</h5>
+        <p class="card-text"><strong>파일 이름:</strong> {{originFileName}}</p>
+        <p class="card-text"><strong>광고 시작:</strong> {{formattedStartTime}}</p>
+        <p class="card-text"><strong>광고 종료:</strong> {{formattedEndTime}}</p>
+        <p><img src="/images/ad/{{originFileName}}" class="ad-img" style="box-shadow: 2px 2px 5px #d0ccc9">
+        </p>
+        <a href="/admin/ad/update/{{id}}" class="btn btn-warning">수정</a>
+        <form action="/admin/ad/delete/{{id}}" method="post" style="display:inline;">
+            <button type="submit" class="btn btn-danger" onclick="return confirm('정말 삭제하시겠습니까?');">삭제</button>
+        </form>
+        <a href="/admin/ad/list" class="btn btn-secondary">목록으로 돌아가기</a>
+        {{/ad}}
+    </div>
+</div>
+

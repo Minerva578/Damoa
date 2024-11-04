@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.damoa.repository.interfaces.VisitorRepository">
+
+
+    <insert id="insertVisitor">
+        INSERT INTO visitor_tb (user_ip)
+        VALUES (#{userIp})
+    </insert>
+
+    <select id="getMonthlyVisitorData" resultType="com.damoa.dto.user.MonthlyVisitorDTO">
+        SELECT DATE_FORMAT(visit_date, '%Y-%m') AS month, COUNT(*) AS count
+        FROM visitor_tb
+        GROUP BY DATE_FORMAT(visit_date, '%Y-%m')
+    </select>
+
+</mapper>

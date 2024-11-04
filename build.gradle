@@ -1,0 +1,66 @@
+plugins {
+    id 'java'
+    id 'war'
+    id 'org.springframework.boot' version '3.2.10'
+    id 'io.spring.dependency-management' version '1.1.6'
+}
+
+group = 'com.damoa'
+version = '0.0.1-SNAPSHOT'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-mustache'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.3'
+    compileOnly 'org.projectlombok:lombok'
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    runtimeOnly 'com.h2database:h2'
+    runtimeOnly 'com.mysql:mysql-connector-j'
+    annotationProcessor 'org.projectlombok:lombok'
+    providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:3.0.3'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    // Spring Security 의존성 추가
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    // sms 인증 의존성 추가
+    implementation group: 'net.nurigo', name: 'javaSDK', version: '2.2'
+    // Google API dependencies 스프링 부트 3.2.10에서 인식되는 버전들.
+    implementation 'com.google.api-client:google-api-client:1.31.3'
+    implementation 'com.google.apis:google-api-services-drive:v3-rev197-1.25.0'
+    implementation 'com.google.apis:google-api-services-sheets:v4-rev612-1.25.0'
+    implementation 'com.google.auth:google-auth-library-oauth2-http:0.25.2'
+    implementation 'com.google.http-client:google-http-client-jackson2:1.39.1'
+    implementation 'com.google.oauth-client:google-oauth-client-jetty:1.22.0'
+    // WebSocket 의존성
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'
+    implementation 'org.webjars:sockjs-client:1.1.2'
+    implementation 'org.webjars:stomp-websocket:2.3.3'
+    // JavaScript AJAX 호출을 편하게 해줌 $.ajax() 사용가능.
+    implementation 'org.webjars:jquery:3.6.4'
+    // MongoDB 의존성 추가
+    implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
+    // json
+    implementation 'org.json:json:20210307'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}

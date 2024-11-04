@@ -1,0 +1,335 @@
+{{>layout/header}}
+<style type="text/css">
+    .second-box, .third-box, .forth-box {
+display: none;
+}
+.project-container1 {
+width: 100%;
+display: flex;
+justify-content: center;
+align-items: center;
+}
+.skill-container {
+width: 100%; /* 이 너비는 조정 가능합니다 */
+display: flex;
+flex-wrap: wrap; /* 줄 바꿈 허용 */
+}
+.skill-box {
+width: 70px; /* 각 스킬 박스의 너비 */
+margin: 3px;
+padding: 2px;
+border-radius: 15px;
+background: white;
+border: 1px solid #DEDEDE;
+}
+.form-group{
+margin: 20px; }
+.quitbox {
+background: red;
+}
+</style>
+<div class="container mt-5">
+    <h2>프로젝트 정보 입력</h2>
+
+    <progress id="progressBar" max="100" value="0"></progress>
+    <div class="project-container1">
+        <div class="project-box first-box " id="box1">
+            <form action="/project/save" name="reqDTO" method="POST" enctype="multipart/form-data"
+                  onsubmit="return validateForm()">
+                <input type="hidden" class="form-control" id="userId" name="userId" value="1" required>
+                <div class="form-group">
+                    <label for="job">직군/직무</label>
+                    <select name="job" class="form-control" required>
+                        <option value="" disabled selected>선택하세요</option> <!-- 기본 옵션 추가 -->
+                        <option value="1">풀스택</option>
+                        <option value="2">프론트</option>
+                        <option value="3">백</option>
+                        <option value="4">서버</option>
+                        <option value="5">데브옵스</option>
+                        <option value="6">데이터</option>
+                        <option value="7">AI</option>
+                        <option value="8">임베디드</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="skill">기술</label>
+                    <select name="skill" class="form-control skill-form" required>
+                        {{#skillList}}
+                            <option value="{{name}}">{{name}}</option>
+                        {{/skillList}}
+                    </select>
+                    <div class="skill-container"></div>
+                    <input type="hidden" id="totalSkills" value="aaaaa" name="totalSkills">
+                </div>
+                <div class="form-group">
+                    <label for="minyears">연차</label>
+                    <div class="form-group">
+                        <label for="maxyears">최소 연차</label>
+                        <input type="number" min="1" max="50" class="form-control" id="maxYears" name="minYears"
+                               placeholder="최소 연차" required>
+                        <label for="minyears">최대 연차</label>
+                        <input type="number" min="1" max="50" class="form-control" id="minYears" name="maxYears"
+                               placeholder="최대 연차" required>
+                    </div>
+
+                </div>
+        </div>
+        <div class="project-box second-box" id="box2">
+            <h4>프로젝트 명</h4>
+            <input style="margin-bottom: 20px;" type="text" name="projectName" class="form-control" required>
+            <h4>프로젝트 시작 희망일</h4>
+            <div class="form-group">
+                <input type="date" id="project-start" name="projectStart" class="form-control" max="2077-06-20"
+                       min="2024-11-01"
+                       value="2024-11-01" required style="margin-bottom: 20px;">
+            </div>
+
+            <h4>예상 기간</h4>
+            <div class="form-group row" style="margin-bottom: 20px;">
+                <div class="col-md-6">
+                    <select name="expected-period" class="form-control" required>
+                        <option value="months">개월</option>
+                        <option value="weeks">주</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <input type="number" min='1' max='50' class="form-control" id="expectedPeriod" name="expectedPeriod"
+                           required>
+                </div>
+            </div>
+
+            <h4>프로젝트 예산</h4>
+            <div class="form-group" style="margin-bottom: 20px;">
+                <input type="radio" name="salaryType" value="월 단위" required> 월 단위
+                <input type="radio" name="salaryType" value="프로젝트 단위" required> 프로젝트 단위
+            </div>
+
+            <h4>근무 방식</h4>
+            <div class="form-group" style="margin-bottom: 20px;">
+                <input type="radio" name="workingStyle" value="1" required> 원격 근무
+                <input type="radio" name="workingStyle" value="2" required> 원격,상주 모두 가능
+                <input type="radio" name="workingStyle" value="3" required> 상주 근무
+            </div>
+
+            <h4>추가 정보</h4>
+            <div class="form-group" style="margin-bottom: 20px;">
+                <select name="meeting" class="form-control" required>
+                    <option value="1">오프라인(협의불가능)</option>
+                    <option value="2">오프라인(협의가능)</option>
+                    <option value="3">온라인</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <h4>근무 지역</h4>
+                <div class="address" style="margin-bottom: 20px;">
+                    <input type="radio" name="address" value="1" required> 서울
+                    <input type="radio" name="address" value="2" required> 경기
+                    <input type="radio" name="address" value="3" required> 인천
+                    <input type="radio" name="address" value="4" required> 수원
+                    <input type="radio" name="address" value="5" required> 부산
+                    <input type="radio" name="address" value="6" required> 강원
+                    <input type="radio" name="address" value="7" required> 대전
+                </div>
+                <h4>근무 시간</h4>
+                <div class="address">
+                    <input type="radio" name="worktime" value="오전 9시 - 오후 6시" required> 오전 9시 - 오후 6시
+                    <input type="radio" name="worktime" value="오전 10시 - 오후 7시" required> 오전 10시 - 오후 7시
+                    <input type="radio" name="worktime" value="자율 근무제" required> 자율 근무제
+                    <input type="radio" name="worktime" value="조율 후 결정" required> 조율 후 결정
+                </div>
+            </div>
+
+            <h4>근무 시간 조율</h4>
+            <div class="form-group">
+                <input type="radio" name="workAdjust" value="1" required> 원격,상주 모두 가능
+                <input type="radio" name="workAdjust" value="2" required> 상주 근무
+                <input type="radio" name="workAdjust" value="3" required> 원격 근무
+            </div>
+
+            <h4>월차 제공</h4>
+            <div class="form-group">
+                <input type="radio" name="vacation" value="possible" required> 제공
+                <input type="radio" name="vacation" value="impossible" required> 미제공
+                <input type="radio" name="vacation" value="negotiation" required> 협의 가능
+            </div>
+        </div>
+        <div class="project-box third-box" id="box3">
+            <h4>현재 프로젝트 진행 상황</h4>
+            <div class="form-group">
+                <input type="radio" name="progress" value="1" required> 기획 단계
+                <input type="radio" name="progress" value="2" required> 기획서가 준비되어 있음
+                <input type="radio" name="progress" value="3" required> 이미 프로젝트가 진행 중임
+            </div>
+            <h4>주요 담당 업무</h4>
+            <div class="form-group">
+                <textarea id="main-tasks" name="mainTasks" class="form-control" required></textarea>
+            </div>
+            <h4>세부 업무 범위</h4>
+            <div class="form-group">
+                <textarea id="detail-task" name="detailTask" class="form-control" required></textarea>
+            </div>
+            <h4>기타 전달사항 또는 우대사항</h4>
+            <div class="form-group">
+                <textarea id="delivered" name="delivered" class="form-control" required></textarea>
+            </div>
+
+            <h4>프로젝트 관련 자료</h4>
+            <div class="form-group">
+                <input type="file" id="file" name="files" accept="image/png, image/jpeg" class="form-control-file">
+            </div>
+        </div>
+        <div class="project-box forth-box" id="box4">
+
+            <h4>담당자 정보</h4>
+            <div class="form-group">
+                <label for="company">회사명(사업자명)</label>
+                <input type="text" class="form-control" id="company" name="company" required>
+            </div>
+            <div class="form-group">
+                <label for="name">담당자 이름</label>
+                <input type="text" class="form-control" id="managerName" name="managerName" required>
+            </div>
+            <div class="form-group">
+                <label for="contact">담당자 연락처</label>
+                <input type="tel" class="form-control" id="contact" name="contact" required>
+            </div>
+            <div class="form-group">
+                <label for="email">담당자 이메일</label>
+                <input type="email" class="form-control" id="email" name="email" required>
+            </div>
+
+            <div class="form-group">
+                <input type="checkbox" id="agree" name="agree" value="0" required>
+                <label for="agree">(필수)다모아 <a href="save-form">이용약관</a>에 동의합니다</label>
+            </div>
+
+            <button type="submit" class="btn btn-primary" onclick="checkPoint()">제출</button>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="flex-box">
+    <button type="button" class="btn btn-secondary" onclick="before()">이전</button>
+    <button type="button" class="btn btn-primary" onclick="next()">다음</button>
+</div>
+
+<script>
+
+    var progress = 0;
+    var currentBox = 0;
+    var boxes = [
+document.getElementById("box1"),
+document.getElementById("box2"),
+document.getElementById("box3"),
+document.getElementById("box4")
+];
+
+function updateVisibility() {
+boxes.forEach((box, index) => {
+    box.style.display = index === currentBox ? 'block' : 'none';
+});
+
+// 진행 상황 업데이트
+    var progress = (currentBox / (boxes.length - 1)) * 100; // 0%에서 100%로
+    document.getElementById("progressBar").value = progress; // 프로그레스 바 업데이트
+
+
+    }
+
+    function next() {
+        if (currentBox < boxes.length - 1) {
+            currentBox++;
+            updateVisibility();
+        }
+    }
+
+    function before() {
+        if (currentBox > 0) {
+            currentBox--;
+            updateVisibility();
+        }
+    }
+
+    function validateForm() {
+    const minYears = document.getElementById('minyears').value;
+    const maxYears = document.getElementById('maxyears').value;
+
+    if (minYears && maxYears && parseInt(maxYears) < parseInt(minYears)) {
+        alert("최대 연차는 최소 연차보다 클 수 없습니다.");
+        return false; // 폼 제출 방지
+    }
+
+    // 포인트 차감 확인 메시지
+    const confirmMessage = "포인트 10만이 차감됩니다. 계속하시겠습니까?";
+    if (!confirm(confirmMessage)) {
+        return false; // 사용자가 취소하면 폼 제출 방지
+    }
+
+    return true; // 폼 제출 허용
+}
+
+
+
+    updateVisibility();
+
+function before() {
+if (currentBox > 0) {
+    currentBox--;
+    updateVisibility();
+}
+}
+
+updateVisibility();
+
+
+const selectElement = document.querySelector('.skill-form');
+const skillsDiv = document.querySelector('.skill-container');
+const hiddenInput = document.getElementById('totalSkills');
+let selectedSkills = [];
+
+selectElement.addEventListener('change',function(){
+const selectedValue = selectElement.value;
+const selectedText = selectElement.options[selectElement.selectedIndex].text;
+selectedSkills.push(selectedValue);
+
+const newSkill = document.createElement('div');
+newSkill.textContent=selectedText;
+newSkill.classList.add('skill-box');
+
+skillsDiv.appendChild(newSkill);
+
+
+hiddenInput.value = JSON.stringify(selectedSkills);
+console.log(hiddenInput.value); // 스킬 추가 후 값 확인
+hiddenInput.value = JSON.stringify(selectedSkills);
+});
+
+function checkPoint(){
+        fetch('/user/point')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('서버 응답이 올바르지 않습니다.');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log("잔액 정보:", data);
+                if(data < 100000){
+                    if (confirm("등록시 100,000 포인트가 필요합니다. \n보유 포인트가 부족합니다. \n충전하시겠습니까?")) {
+                      newWindow = window.open('/toss/store', '_blank', 'width=650,height=650');
+                    }
+                }
+            })
+            .catch(error => {
+                console.error("오류 발생:", error);
+            });
+        }
+
+</script>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
+{{>layout/footer}}

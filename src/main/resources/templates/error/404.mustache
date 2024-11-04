@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>페이지를 찾을 수 없습니다 - 404</title>
+    <link rel="stylesheet" href="/css/styles.css"> <!-- CSS 파일 링크 -->
+    <style>
+        body {
+            background-color: #f0f4ff; /* 부드러운 파란색 배경 */
+            color: #333; /* 글자 색상 */
+            font-family: 'Arial', sans-serif; /* 폰트 설정 */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            text-align: center;
+        }
+        .error-container {
+            border: 2px solid #007bff; /* 파란색 테두리 */
+            border-radius: 8px;
+            padding: 40px;
+            background: white; /* 흰색 배경 */
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            font-size: 72px; /* 큰 제목 */
+            margin: 0;
+            color: #007bff; /* 파란색 제목 */
+        }
+        h2 {
+            font-size: 24px;
+            margin: 10px 0 20px;
+        }
+        p {
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 16px;
+            color: white; /* 글자 색상 */
+            background-color: #007bff; /* 파란색 버튼 */
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+        .btn:hover {
+            background-color: #0056b3; /* 버튼 호버 색상 */
+        }
+        .dev-icon {
+            font-size: 50px; /* 아이콘 크기 */
+            color: #007bff; /* 파란색 아이콘 */
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+<div class="error-container">
+    <h1>💻 404 </h1>
+    <h2>페이지를 찾을 수 없습니다.</h2>
+    <p>요청하신 페이지는 존재하지 않거나, 이동되었을 수 있습니다.</p>
+    <a href="/main" class="btn">홈으로 돌아가기</a>
+    <br>
+    <img src="/images/logos/damoa_title_image.png" style="width: 250px;">
+</div>
+</body>
+</html>

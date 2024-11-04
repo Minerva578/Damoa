@@ -1,0 +1,60 @@
+{{> admin/admin_header}}
+
+<div class="container mt-4">
+    <h2 class="mb-4">회사 리뷰 상세</h2>
+
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead>
+            <tr>
+                <th>리뷰 ID</th>
+                <th>회사 ID</th>
+                <th>프리랜서 ID</th>
+                <th>작업 품질 점수</th>
+                <th>시간 준수 점수</th>
+                <th>피드백 점수</th>
+                <th>의향 점수</th>
+                <th>전체 점수</th>
+                <th>리뷰 날짜</th>
+                <th>응답</th>
+            </tr>
+            </thead>
+            <tbody>
+            {{#detail}}
+                <tr>
+                    <td>{{id}}</td>
+                    <td>{{companyId}}</td>
+                    <td>{{freelancerId}}</td>
+                    <td>{{workQualityScore}}</td>
+                    <td>{{timelinessScore}}</td>
+                    <td>{{feedbackScore}}</td>
+                    <td>{{willingnessScore}}</td>
+                    <td>{{overallScore}}</td>
+                    <td>{{reviewDate}}</td>
+                    <td>{{responseData}}</td>
+
+                </tr>
+            {{/detail}}
+            {{^detail}}
+                <tr>
+                    <td colspan="10" class="text-center">
+                        <div class="alert alert-warning" role="alert">
+                            리뷰가 없습니다.
+                        </div>
+                    </td>
+                </tr>
+            {{/detail}}
+            </tbody>
+        </table>
+    </div>
+
+
+    <div class="text-center mt-4">
+        <button class="btn btn-secondary" onclick="location.href='/admin/list/company/1'">리뷰 목록으로 돌아가기</button>
+        {{#detail}}
+            <form action="/admin/companyreview/delete/{{id}}" method="post" style="display:inline;">
+                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('정말 삭제하시겠습니까?');">삭제</button>
+            </form>
+        {{/detail}}
+    </div>
+</div>

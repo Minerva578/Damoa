@@ -1,0 +1,343 @@
+{{> layout/header }}
+
+<style>
+    .container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #f9f9f9;
+        border-radius: 8px;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+        text-align: center;
+        color: #333;
+        margin-bottom: 30px;
+        font-family: 'Arial', sans-serif;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    label {
+        font-weight: bold;
+        color: #555;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 10px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        margin-top: 5px;
+    }
+
+    button, .btn {
+        width: 100%;
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        margin-top: 10px;
+        background-color: #007bff;
+        color: white;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    button:hover, .btn:hover {
+        background-color: #0056b3;
+    }
+
+    .btn-outline-secondary {
+        background-color: white;
+        border: 1px solid #ccc;
+        color: #333;
+        width: 48%;
+        padding: 10px;
+        cursor: pointer;
+    }
+
+    .btn-outline-secondary:hover {
+        background-color: #f1f1f1;
+        border-color: #bbb;
+    }
+
+    .btn-danger {
+        background-color: #dc3545;
+    }
+
+    .btn-warning {
+        background-color: #ffc107;
+    }
+
+    .text-white {
+        color: white;
+    }
+
+    .text-center {
+        text-align: center;
+    }
+
+    #pwdConfirm {
+        display: block;
+        font-size: 14px;
+        margin-top: 5px;
+    }
+
+    #emailCheckResult {
+        font-size: 14px;
+        margin-top: 5px;
+    }
+
+    .d-flex {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 20px;
+    }
+
+    hr {
+        margin-top: 30px;
+    }
+
+    .swal2-popup {
+        font-size: 16px !important;
+    }
+</style>
+
+<div class="container mt-5">
+    <h2 class="text-center">회원가입</h2>
+    <form action="/user/sign-up" method="post" id="signUpForm">
+        <input type="hidden" name="socialType" id="socialType" value="local"> <!-- 기본 소셜 타입 설정 -->
+
+        <div class="form-group">
+            <label for="userType">회원 유형 선택</label>
+            <div class="d-flex justify-content-between">
+                <button type="button" id="freelancerBtn" class="btn-outline-secondary">프리랜서</button>
+                <button type="button" id="companyBtn" class="btn-outline-secondary">기업</button>
+            </div>
+            <input type="hidden" name="userType" id="userType" value="">
+        </div>
+        <div class="form-group">
+            <label for="email">이메일</label>
+            <input type="email" class="form-control" id="email" name="email" placeholder="비즈니스용 이메일 사용을 권장합니다." required>
+            <button type="button" id="checkDuplicateEmail" class="btn btn-secondary mt-2">중복 확인</button>
+            <div id="emailCheckResult" class="mt-2"></div>
+        </div>
+
+        <!-- 휴대폰 번호 입력 및 인증 -->
+        <div class="form-group">
+            <label for="phoneNumber">휴대폰 번호</label>
+            <input type="text" class="form-control" id="inputPhoneNumber" name="phoneNumber" minlength="11" maxlength="11" placeholder="하이픈(-) 없이 입력해주세요." required>
+            <button type="button" id="sendPhoneNumber" class="btn btn-secondary mt-2">인증번호 발송</button>
+        </div>
+
+        <!-- 인증번호 입력 -->
+        <div class="form-group">
+            <label for="inputCertifiedNumber">인증번호</label>
+            <input type="text" class="form-control" id="inputCertifiedNumber" maxlength="4" name="certifiedNumber" placeholder="인증번호를 입력해주세요." required>
+            <button type="button" id="checkBtn" class="btn btn-secondary mt-2">인증번호 확인</button>
+        </div>
+
+        <div class="form-group">
+            <label for="username">아이디</label>
+            <input type="text" class="form-control" id="username" name="username" placeholder="아이디를 입력해주세요." required>
+        </div>
+        <div class="form-group">
+            <label for="password">비밀번호</label>
+            <input type="password" class="form-control" id="password" name="password" minlength="8" maxlength="32"
+            placeholder="8자 이상 32자 이하로 입력해 주세요." required>
+        </div>
+
+        <div class="form-group">
+            <label for="passwordCheck">비밀번호 확인</label>
+            <input type="password" class="form-control" id="passwordCheck" name="passwordCheck" 
+            oninput="pwdCheck()" minlength="8" maxlength="32" placeholder="비밀번호를 확인해주세요." required>
+        </div>
+        <span id="pwdConfirm"></span>
+
+        <button type="submit" id="signUpBtn" class="btn btn-primary btn-block">회원가입</button>
+    </form>
+
+    <hr>
+    <div class="text-center">
+        <p>또는 소셜 계정으로 가입하세요:</p>
+        <div class="d-flex justify-content-center">
+            <a href="{{googleLoginUrl}}" class="btn btn-danger mr-2" onclick="setSocialType('google')">
+                <i class="fab fa-google"></i> Google 회원가입
+            </a>
+            <a href="{{kakaoLoginUrl}}" class="btn btn-warning text-white mr-2">
+                <i class="fas fa-comment"></i> Kakao 회원가입
+            </a>
+        </div>
+    </div>
+</div>
+
+
+<script>
+let isEmailValid = false; // 이메일 유효성 확인 변수
+let isPhoneNumberVerified = false; // 휴대폰 인증 확인 변수
+
+// 소셜 타입을 동적으로 설정하는 함수
+function setSocialType(type) {
+    document.getElementById('socialType').value = type; // 소셜 타입 설정
+}
+
+// 모든 버튼을 기본 상태로 리셋하는 함수
+function resetButtonStyles() {
+    document.getElementById('freelancerBtn').classList.remove('btn-primary', 'text-white');
+    document.getElementById('freelancerBtn').classList.add('btn-outline-secondary');
+    
+    document.getElementById('companyBtn').classList.remove('btn-primary', 'text-white');
+    document.getElementById('companyBtn').classList.add('btn-outline-secondary');
+}
+
+// 프리랜서 버튼 클릭 시 userType 설정
+document.getElementById('freelancerBtn').addEventListener('click', function() {
+    document.getElementById('userType').value = 'freelancer';
+    Swal.fire('프리랜서로 설정되었습니다.');
+
+    // 버튼 스타일 리셋 후, 프리랜서 버튼만 활성화
+    resetButtonStyles();
+    document.getElementById('freelancerBtn').classList.remove('btn-outline-secondary');
+    document.getElementById('freelancerBtn').classList.add('btn-primary', 'text-white');
+});
+
+// 기업 버튼 클릭 시 userType 설정
+document.getElementById('companyBtn').addEventListener('click', function() {
+    document.getElementById('userType').value = 'company';
+    Swal.fire('기업으로 설정되었습니다.');
+
+    // 버튼 스타일 리셋 후, 기업 버튼만 활성화
+    resetButtonStyles();
+    document.getElementById('companyBtn').classList.remove('btn-outline-secondary');
+    document.getElementById('companyBtn').classList.add('btn-primary', 'text-white');
+});
+
+$("#checkDuplicateEmail").on('click', function() {
+    const email = document.getElementById('email').value;
+    const resultDiv = document.getElementById('emailCheckResult');
+
+    if (!email) {
+        resultDiv.innerText = "이메일을 입력해 주세요.";
+        resultDiv.style.color = 'red';
+        isEmailValid = false;
+        return;
+    }
+
+    fetch('/user/check-email?email=' + email)
+        .then(response => response.json())
+        .then(data => {
+            resultDiv.innerText = data.message;
+
+            if (data.message === "사용 가능한 이메일입니다.") {
+                resultDiv.style.color = 'green';
+                isEmailValid = true;
+            } else if (data.message === "중복된 이메일은 사용할 수 없습니다.") {
+                resultDiv.style.color = 'red';
+                isEmailValid = false;
+                alert('이메일이 중복되었습니다. 다른 이메일을 사용해 주세요.'); // 알림 창 표시
+                location.reload(); // 페이지 리로딩
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            resultDiv.innerText = "에러가 발생했습니다. 다시 시도해 주세요.";
+            resultDiv.style.color = 'red';
+            isEmailValid = false;
+        });
+});
+
+document.getElementById('email').addEventListener('input', function() {
+    isEmailValid = false; // 유효성 초기화
+    document.getElementById('emailCheckResult').innerText = ""; // 결과 메시지 초기화
+});
+
+function pwdCheck() {
+    if ($('#password').val() === $('#passwordCheck').val()) {
+        $('#pwdConfirm').text('비밀번호 일치').css('color', 'green');
+    } else {
+        $('#pwdConfirm').text('비밀번호 불일치').css('color', 'red');
+    }
+}
+
+document.querySelector('#signUpForm').addEventListener('submit', function(event) {
+    const passwordMatches = $('#password').val() === $('#passwordCheck').val();
+    const userType = document.getElementById('userType').value;
+    
+    if (!userType) {
+        event.preventDefault(); // 기본 제출 방지
+        Swal.fire({
+            icon: 'error',
+            title: '회원 유형 미선택',
+            text: '프리랜서 또는 기업 중 하나를 선택해 주세요.'
+        });
+    }
+    
+    if (!passwordMatches) {
+        event.preventDefault(); // 기본 제출 방지
+        alert('비밀번호가 일치하지 않습니다.'); // 경고 메시지
+    }
+     if (!isPhoneNumberVerified) {
+        event.preventDefault(); // 기본 제출 방지
+        alert('휴대폰 인증이 완료되지 않았습니다. 인증을 완료해 주세요.'); // 경고 메시지
+    }
+});
+
+// sms 인증
+$('#sendPhoneNumber').click(function(){
+    let phoneNumber = $('#inputPhoneNumber').val();
+
+    // 휴대폰 번호 길이가 11자리인지 확인
+    if (phoneNumber.length !== 11) {
+        Swal.fire({
+            icon: 'error',
+            title: '휴대폰 번호 입력 오류',
+            text: '휴대폰 번호는 11자리로 입력해주세요.',
+            footer: ''
+        });
+        return;
+    }
+
+    Swal.fire('인증번호 발송 완료!')
+
+    $.ajax({
+        type: "GET",
+        url: "/user/sendSms",
+        data: {
+            "phoneNumber" : phoneNumber
+        },
+        success: function(res){
+            $('#checkBtn').click(function(){
+                if($.trim(res) == $('#inputCertifiedNumber').val()){
+                    Swal.fire(
+                        '인증성공!',
+                        '휴대폰 인증이 정상적으로 완료되었습니다.',
+                        'success'
+                    )
+                    // 휴대폰 인증 완료 상태 설정
+                    isPhoneNumberVerified = true;
+
+                    $.ajax({
+                        type: "GET",
+                        url: "/update/phone",
+                        data: {
+                            "phoneNumber" : $('#inputPhoneNumber').val()
+                        }
+                    })
+                }else{
+                    Swal.fire({
+                        icon: 'error',
+                        title: '인증오류',
+                        text: '인증번호가 올바르지 않습니다!',
+                        footer: ''
+                    })
+                }
+            })
+        }
+    })
+});
+</script>
+
+{{> layout/footer }}

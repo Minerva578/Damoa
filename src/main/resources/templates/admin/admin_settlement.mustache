@@ -1,0 +1,50 @@
+{{>admin/admin_header}}
+
+
+<div class="container mt-5">
+    <h1>정산</h1>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th></th>
+            <th>Pay Key</th>
+            <th>결제한 유저 ID</th>
+            <th>주문번호</th>
+            <th>주문내역</th>
+            <th>금액</th>
+            <th>결제 방법</th>
+            <th>요청 시간</th>
+
+        </tr>
+        </thead>
+
+        <tbody>
+        <!-- 환불하기 버튼-->
+        {{#paymentList}}
+            <tr>
+                <td>{{id}}</td>
+                <td>{{paymentKey}}</td>
+                <td>{{userId}}</td>
+                <td>{{orderId}}</td>
+                <td>{{orderName}}</td>
+                <td>{{amount}}</td>
+                <td>{{method}}</td>
+                <td>{{requestedAt}}</td>
+                <td><span id="refund--Btn" data-status="{{status}}"><a href="javascript:void(0)"
+                                                                       onclick="refund({{id}})" class="btn btn-primary">환불하기</a></span>
+                </td>
+            </tr>
+        {{/paymentList}}
+        {{^paymentList}}
+            <tr>
+                <td colspan="8" class="text-center">결제내역이 없습니다</td>
+            </tr>
+        {{/paymentList}}
+        </tbody>
+    </table>
+
+</div>
+
+
+</body>
+</html>

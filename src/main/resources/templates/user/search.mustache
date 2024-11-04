@@ -1,0 +1,16 @@
+{{>layout/header}}
+{{>layout/chatbot}}
+{{>layout/chat}}
+
+<div>
+    <h3>프로젝트 검색</h3>
+    {{#projectList}}
+            <div onclick="location.href='/project/detail/{{id}}'">
+                <h6>{{projectName}}</h6>
+                <p>{{meeting}}</p>
+            </div>
+    {{/projectList}}
+</div>
+
+
+{{>layout/footer}}

@@ -1,0 +1,81 @@
+{{> layout/header}}
+
+<style>
+    body {
+        background-color: #f8f9fa;
+    }
+    .card {
+        transition: transform 0.2s; /* 카드 전환 효과 */
+    }
+    .card:hover {
+        transform: scale(1.05); /* 카드 확대 효과 */
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* 그림자 효과 */
+    }
+    .card-title {
+        color: #007BFF; /* 제목 색상 */
+    }
+    .card-text {
+        color: #555; /* 텍스트 색상 */
+    }
+    .btn {
+        background-color: #007BFF; /* 버튼 배경색 */
+        border: none; /* 버튼 경계 제거 */
+    }
+    .btn:hover {
+        background-color: #0056b3; /* 버튼 호버 색상 */
+    }
+    h2 {
+        color: #343a40; /* 제목 색상 */
+    }
+</style>
+
+<div class="container mt-4">
+    <h2 class="mb-4 text-center">Company Reviews</h2>
+
+    <div class="row">
+        {{#companyReview}}
+            <div class="col-md-6 mb-3">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">{{freelancerName}}</h5>
+                        <h6 class="text-muted">프리랜서에 대한 리뷰</h6>
+                        <hr>
+                        <p class="card-text" aria-readonly="true">{{responseData}}</p>
+                        <div class="card-text" style="font-weight: bold; margin-bottom: 15px;">
+                            총 리뷰 별점:
+                            <span class="star-rating" id="overallStars{{id}}"></span>
+                        </div>
+                        <button class="btn btn-primary btn-block mt-3" onclick="location.href='/reviews/company/detail/{{id}}'">리뷰 상세 보기</button>
+                    </div>
+                </div>
+            </div>
+        {{/companyReview}}
+    </div>
+</div>
+
+<script>
+    function renderStars(id, score) {
+        const totalStars = 5;
+        let starsHtml = '';
+
+        for (let i = 1; i <= totalStars; i++) {
+            if (i <= score) {
+                starsHtml += '<i class="fas fa-star" style="color: #fbcb1c;"></i>'; // 채워진 어두운 노란색 별
+            } else {
+                starsHtml += '<i class="far fa-star" style="color: gray;"></i>'; // 빈 회색 별
+            }
+        }
+
+         // 별 점수를 출력할 요소의 ID에 starsHtml을 삽입
+        document.getElementById('overallStars' + id).innerHTML = starsHtml;
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        {{#companyReview}}
+            renderStars('{{id}}', parseInt("{{overallScore}}") || 0)
+        {{/companyReview}}
+    });
+</script>
+
+{{> layout/footer}}
+

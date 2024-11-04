@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.damoa.repository.interfaces.FreelancerReviewRepository">
+
+    <!-- 모든 프리랜서 리뷰 list 데이터 및 user_tb username 요청 쿼리 -->
+    <select id="findAllByFreelancerReviews" resultType="com.damoa.dto.review.FreelancerMainDTO">
+        SELECT fr.*, u.username AS company_name
+        FROM freelancers_review fr
+        LEFT JOIN user_tb u ON fr.company_id = u.id
+        ORDER BY fr.id DESC
+    </select>
+
+    <!-- {id}를 기준으로 상세 리뷰 데이터 및 user_tb username 요청 쿼리 -->
+    <select id="findByFreelancerReviewId" parameterType="com.damoa.dto.review.FreelancerMainDTO">
+        SELECT fr.*, u.username As company_name
+        FROM freelancers_review fr
+        JOIN user_tb u ON fr.company_id = u.id
+        WHERE fr.id = #{id}
+    </select>
+
+    <!-- GCP 프리랜서 리뷰 데이터 MySQL로 insert-->
+    <insert id="insertFreelancerReview" parameterType="com.damoa.repository.model.FreelancerReview">
+        INSERT INTO freelancers_review (writer_id, company_id, communication_score,
+        timeliness_score, support_score, willingness_score,
+        overall_score, review_date, response_data)
+        VALUES (#{writerId}, #{companyId}, #{communicationScore},
+        #{timelinessScore}, #{supportScore}, #{willingnessScore},
+        #{overallScore}, #{reviewDate}, #{responseData})
+    </insert>
+
+    <!--    이름 평점 프로젝트명 리뷰평-->
+    <select id="findFreelancerReview" resultType="com.damoa.dto.admin.FreelancerReviewDTO">
+        select r.id, u.username, p.project_name, r.overall_score, r.response_data
+        from freelancers_review as r
+        join freelancer_tb as f on f.id = r.writer_id
+        join user_tb as u on u.id = f.user_id
+        join project_tb as p on r.company_id = p.user_id
+        limit #{limit} offset #{offset}
+    </select>
+
+    <select id="countFreelancerReview" resultType="int">
+        select count(*)
+        from freelancers_review as r
+        join freelancer_tb as f on f.id = r.writer_id
+        join user_tb as u on u.id = f.user_id
+        join project_tb as p on r.company_id = p.user_id;
+    </select>
+
+    <select id="getDailyFreelancerReviewData" resultType="com.damoa.dto.DailyFreelancerReviewDTO">
+        SELECT DATE_FORMAT(review_date, '%m-%d') AS date, COUNT(*) AS count
+        FROM freelancers_review
+        WHERE review_date BETWEEN #{startDate} AND #{endDate}
+        GROUP BY DATE_FORMAT(review_date, '%m-%d')
+    </select>
+
+    <select id="freelancerReviewDetail" resultType="com.damoa.dto.admin.FreelancerReviewDetailDTO">
+        select * from freelancers_review where id = #{id}
+    </select>
+
+    <delete id="delete">
+        delete from freelancers_review where id = #{id}
+    </delete>
+
+
+</mapper>

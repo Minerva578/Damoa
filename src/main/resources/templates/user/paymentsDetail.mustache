@@ -1,0 +1,138 @@
+{{> layout/header }}
+<style>
+    .container {
+        display: flex;
+        width: 100%;
+        min-height: 100vh;
+        background-color: #f5f5f5;
+        margin-top: 70px;
+        padding-bottom: 20px;
+    }
+
+
+    .content {
+        flex-grow: 1;
+        padding: 40px;
+        background-color: #fff;
+        min-height: 100vh;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        margin-left: 0;
+    }
+
+    .content h1 {
+        font-size: 26px;
+        margin-bottom: 20px;
+    }
+    .payment-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+
+    .payment-table th, .payment-table td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: center;
+    }
+
+    .payment-table thead th {
+        background-color: #007BFF;
+        color: white;
+        font-weight: bold;
+    }
+
+    .payment-table tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+
+    .payment-table tr:hover {
+        background-color: #ddd;
+    }
+
+    .payment-table .text-center {
+        text-align: center;
+        color: #777;
+        font-style: italic;
+    }
+
+
+</style>
+<div class="container">
+    <!-- 사이드바 - 프리랜서 전용 메뉴 -->
+    {{> layout/mypage}}
+    <!-- 메인 컨텐츠 -->
+    <div class="content">
+        <h1>결제내역</h1>
+        <table class="payment-table">
+            <thead>
+            <tr>
+                <th>주문 내역</th>
+                <th>금액</th>
+                <th>결제 방법</th>
+                <th>요청 시간</th>
+                <th>환불 요청</th>
+            </tr>
+            </thead>
+            <tbody>
+            {{#paymentList}}
+                <tr>
+                    <td>{{orderName}}</td>
+                    <td>{{amount}}</td>
+                    <td>{{method}}</td>
+                    <td>{{requestedAt}}</td>
+                    <td><span id="refund--Btn" data-status="{{status}}"><a href="javascript:void(0)"
+                                                                           onclick="requestRefund({{id}},{{userId}})"
+                                                                           class="btn btn-primary">환불 신청</a></span>
+                </tr>
+            {{/paymentList}}
+            {{^paymentList}}
+                <tr>
+                    <td colspan="4" class="text-center">결제내역이 없습니다</td>
+                </tr>
+            {{/paymentList}}
+            </tbody>
+        </table>
+
+        <!-- 페이지네이션 -->
+        <nav aria-label="Page navigation">
+            <ul class="pagination" id="paginationContainer">
+                {{#prevPage}} <!-- 이전 페이지가 있을 때 -->
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{prevPage}}" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                {{/prevPage}}
+
+                <!-- 페이지 번호 표시 -->
+                <script>
+                    const totalPages = {{totalPages}}; // 전체 페이지 수
+                const currentPage = {{currentPage}}; // 현재 페이지 (0-based)
+                const paginationContainer = document.getElementById("paginationContainer");
+
+                // 페이지 번호 링크 생성
+                for (let i = 0; i < totalPages; i++) {
+                    const pageItem = document.createElement("li");
+                    pageItem.className = "page-item" + (i === currentPage ? " active" : ""); // 현재 페이지에 active 클래스 추가
+                    pageItem.innerHTML = `<a class="page-link" href="?page=${i}">${i + 1}</a>`; // 1-based로 표시
+                    paginationContainer.appendChild(pageItem);
+                }
+
+                // 다음 페이지 링크
+                    {{#nextPage}}
+                        const nextPageItem = document.createElement("li");
+                        nextPageItem.className = "page-item";
+                        nextPageItem.innerHTML = `<a class="page-link" href="?page={{nextPage}}">다음</a>`;
+                    paginationContainer.appendChild(nextPageItem);
+                    {{/nextPage}}
+
+
+                </script>
+            </ul>
+        </nav>
+    </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.0/sockjs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+<script src="/js/paymentDetail.js"></script>
+{{> layout/footer }}

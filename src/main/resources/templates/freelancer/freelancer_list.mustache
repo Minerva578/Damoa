@@ -1,0 +1,335 @@
+{{> layout/header}}
+
+<!-- 스타일 추가 -->
+<style>
+    .main-container {
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+    }
+
+    .content {
+        flex: 1;
+        padding: 20px;
+    }
+
+    .freelancer-cards-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        justify-content: center;
+        margin-top: 20px;
+    }
+
+    .freelancer-card {
+        display: flex;
+        width: 300px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        background-color: #fff;
+        transition: transform 0.2s;
+        cursor: pointer;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .freelancer-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .freelancer-card h2 {
+        font-size: 1.5em;
+        margin-bottom: 10px;
+    }
+
+    .freelancer-card p {
+        margin: 5px 0;
+        font-size: 0.9em;
+        color: #555;
+    }
+
+    .freelancer-card .card-label {
+        font-weight: bold;
+        color: #333;
+    }
+
+    .freelancer-info-card {
+        padding: 15px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        background-color: #fff;
+        margin-top: 10px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .freelancer-info-card p {
+        margin: 5px 0;
+        font-size: 0.9em;
+        color: #555;
+    }
+
+    .pagination {
+        list-style: none;
+        display: flex;
+        justify-content: center;
+        padding: 0;
+    }
+
+    .pagination .page-item {
+        margin: 0 5px;
+    }
+
+    .pagination .page-link {
+        padding: 8px 12px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        text-decoration: none;
+        color: #007bff;
+    }
+
+    .pagination .page-item.active .page-link {
+        background-color: #007bff;
+        color: #fff;
+    }
+
+    .pagination .page-item.disabled .page-link {
+        color: #ccc;
+    }
+
+    .salary-card p {
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 0;
+        font-size: 1em;
+        color: #555;
+    }
+
+    #filter-button {
+        padding: 5px 20px;
+        margin-left: 10px;
+        background-color: #0ac6ff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+
+    #filter-button:hover {
+        background-color: #008bbf;
+    }
+
+    .filter-dropdown {
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background-color: #fff;
+        transition: border 0.3s ease;
+        margin-right: 10px;
+        appearance: none; /* 기본 화살표 제거 */
+        background-image: url('data:image/svg+xml;charset=utf8,%3Csvg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="gray" class="bi bi-chevron-down" viewBox="0 0 16 16"%3E%3Cpath fill-rule="evenodd" d="M1.5 5.5a.5.5 0 0 1 .707 0L8 10.293l5.793-4.793a.5.5 0 0 1 .707.707l-6 6a.5.5 0 0 1-.707 0l-6-6a.5.5 0 0 1 0-.707z"/%3E%3C/svg%3E'); /* 화살표 추가 */
+        background-repeat: no-repeat;
+        background-position: right 10px center;
+        background-size: 16px; /* 화살표 크기 */
+    }
+    #working-style-select {
+        padding-right: 35px;
+    }
+</style>
+
+<div class="main-container">
+    <div class="content">
+        <h1>프리랜서 목록</h1>
+        <p>프리랜서를 찾고 매칭해보세요</p>
+
+        <!-- 필터링 섹션 -->
+        <div class="filter-section">
+            <select id="job-select" class="filter-dropdown">
+                <option value="">직무</option>
+                {{#careers}}
+                    <option value="{{career}}">{{career}}</option>
+                {{/careers}}
+            </select>
+
+            <select id="working-style-select" class="filter-dropdown">
+                <option value="">근무 방식</option>
+                <option value="재택">재택</option>
+                <option value="출퇴근">출퇴근</option>
+                <option value="파트타임">파트타임</option>
+                <option value="풀타임">풀타임</option>
+            </select>
+
+            <select id="skill-select" class="filter-dropdown">
+                <option value="">기술 스택</option>
+                {{#skills}}
+                    <option value="{{name}}">{{name}}</option>
+                {{/skills}}
+            </select>
+            <input type="hidden" id="filter-button" value="필터 적용">
+        </div>
+
+        <!-- freelancer 목록 -->
+        <div id="freelancer-list" class="freelancer-cards-container"></div>
+        <div id="paginationContainer"></div> <!-- 페이지네이션을 위한 컨테이너 -->
+    </div>
+</div>
+
+<script>
+let currentPage = 1; // 현재 페이지
+const pageSize = 5; // 페이지당 항목 수
+let selectedJob = ''; // 선택된 직무
+let selectedWorkingStyle = ''; // 선택된 근무 방식
+let selectedSkill = ''; // 선택된 스킬
+
+// 필터 적용 버튼 클릭 이벤트 추가
+document.getElementById('job-select').addEventListener('change', function() {
+    selectedJob = this.value;
+    console.log('Selected job:', selectedJob); // 로그 추가
+    loadFreelancers(1);
+});
+
+document.getElementById('working-style-select').addEventListener('change', function() {
+    selectedWorkingStyle = this.value;
+    console.log('Selected working style:', selectedWorkingStyle); // 로그 추가
+    loadFreelancers(1);
+});
+
+document.getElementById('skill-select').addEventListener('change', function() {
+    selectedSkill = this.value;
+    console.log('Selected skill:', selectedSkill); // 로그 추가
+    loadFreelancers(1);
+});
+
+// 페이지네이션을 렌더링하는 함수
+function renderPagination(totalCount, currentPage, pageSize, totalPages) {
+    const paginationContainer = document.getElementById('paginationContainer');
+
+    // 기존 페이지네이션 항목 제거
+    while (paginationContainer.firstChild) {
+        paginationContainer.removeChild(paginationContainer.firstChild);
+    }
+
+    const ul = document.createElement('ul');
+    ul.className = 'pagination';
+
+    const prevLi = document.createElement('li');
+    prevLi.className = currentPage > 1 ? 'page-item' : 'page-item disabled';
+    const prevLink = document.createElement('a');
+    prevLink.className = 'page-link';
+    prevLink.textContent = '이전';
+    prevLink.addEventListener('click', (event) => {
+        event.preventDefault();
+        if (currentPage > 1) { loadFreelancers(currentPage - 1); }
+    });
+    prevLi.appendChild(prevLink);
+    ul.appendChild(prevLi);
+
+    for (let i = 1; i <= totalPages; i++) {
+        const li = document.createElement('li');
+        li.className = i === currentPage ? 'page-item active' : 'page-item';
+        const link = document.createElement('a');
+        link.className = 'page-link';
+        link.textContent = i;
+        link.addEventListener('click', (event) => {
+            event.preventDefault();
+            loadFreelancers(i);
+        });
+        li.appendChild(link);
+        ul.appendChild(li);
+    }
+
+    const nextLi = document.createElement('li');
+    nextLi.className = currentPage < totalPages ? 'page-item' : 'page-item disabled';
+    const nextLink = document.createElement('a');
+    nextLink.className = 'page-link';
+    nextLink.textContent = '다음';
+    nextLink.addEventListener('click', (event) => {
+        event.preventDefault();
+        if (currentPage < totalPages) { loadFreelancers(currentPage + 1); }
+    });
+    nextLi.appendChild(nextLink);
+    ul.appendChild(nextLi);
+
+    paginationContainer.appendChild(ul);
+}
+
+// 페이지 로드 함수
+function loadFreelancers(page) {
+    const queryParams = new URLSearchParams({
+        page: page,
+        size: pageSize,
+        jobPart: selectedJob,
+        workingStyle: selectedWorkingStyle,
+        skill: selectedSkill
+    });
+
+    console.log('Query Params:', queryParams.toString());
+
+    fetch(`/freelancer/list/data?${queryParams.toString()}`)
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('네트워크 오류');
+        }
+        return response.json();
+    })
+    .then(data => {
+        const freelancerList = document.getElementById('freelancer-list');
+        freelancerList.innerHTML = '';
+
+        const salaryCard = document.createElement('div');
+        salaryCard.className = 'freelancer-card';
+        salaryCard.innerHTML = ` 
+            <h4>프리랜서 평균 희망 연봉</h4>
+            <div class="card salary-card">
+                <p><strong>${data.averageSalary} 만원</strong></p>
+            </div>
+        `;
+        freelancerList.appendChild(salaryCard);
+
+        if (Array.isArray(data.freelancers) && data.freelancers.length > 0) {
+            data.freelancers.forEach(freelancer => {
+                const card = document.createElement('div');
+                card.className = 'freelancer-card';
+                card.innerHTML = `
+                    <h2>${freelancer.username}</h2>
+                        <img src="/images/logos/freelancer_list.png" style="margin-bottom: 10px; cursor:pointer; border-radius: 10px;">
+                        <p><span class="card-label">직무:</span> ${freelancer.jobPart}</p>
+                        <p><span class="card-label">근무 방식:</span> ${freelancer.workingStyle}</p>
+                        <p><span class="card-label">기술 스택:</span> ${freelancer.skills}</p>
+                        <p><span class="card-label">상세 내용:</span> ${freelancer.detail}</p>
+                `;
+
+                // 프리랜서 상세 보기 페이지로 이동하는 클릭 이벤트 추가
+                card.addEventListener('click', () => {
+                    window.location.href = `/freelancer/detail/${freelancer.userId}`; // 프리랜서의 ID를 포함하여 상세 페이지로 이동
+                });
+
+                freelancerList.appendChild(card);
+            });
+        } else {
+            // 프리랜서가 없을 경우 메시지 추가
+            const noFreelancerMessage = document.createElement('div');
+            noFreelancerMessage.className = 'freelancer-card';
+            noFreelancerMessage.innerHTML = `<h2>프리랜서가 없습니다.</h2>`;
+            freelancerList.appendChild(noFreelancerMessage);
+        }
+
+        renderPagination(data.totalCount, page, pageSize, data.totalPages);
+    })
+    .catch(error => {
+        console.error("프리랜서를 로드하는 중 오류가 발생했습니다:", error);
+    });
+}
+
+document.getElementById('filter-button').addEventListener('click', function() {
+    loadFreelancers(1);
+});
+
+loadFreelancers(currentPage);
+</script>
+
+{{> layout/footer}}

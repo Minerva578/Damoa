@@ -1,0 +1,37 @@
+{{>admin/admin_header}}
+
+<div class="main-board">
+    <h3 class="sub-title" >FAQ</h3>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>번호</th>
+            <th>제목</th>
+            <th>등록일</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{#faqList}}
+            <tr>
+                <td>{{id}}</td>
+                <td>
+                    <a href="/faq/detail/{{id}}">{{title}}</a>
+                </td>
+                <td>{{createdAt}}</td>
+            </tr>
+        {{/faqList}}
+        {{^faqList}}
+            <tr>
+                <td colspan="5" class="text-center">등록된 FAQ가 없습니다.여기이</td>
+            </tr>
+        {{/faqList}}
+        </tbody>
+    </table>
+    <a href="/faq/save" class="btn btn-primary">새 FAQ 등록</a>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+</html>

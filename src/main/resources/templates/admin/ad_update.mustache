@@ -1,0 +1,33 @@
+{{> admin/admin_header}}
+<div class="card">
+    {{#ad}}
+    <div class="card-body">
+        <form action="/admin/ad/update/{{id}}" method="post" onsubmit="return validateDates()">
+        <input type="text" value="{{title}}" name="title" class="form-control">
+        <p class="card-text"><strong>파일 이름:</strong> {{originFileName}}</p>
+            <input type="date" id="start_time" value="{{formattedStartTime}}" name="startTime" class="form-control mb-3" placeholder="시작 시간">
+            <input type="date" id="end_time" value="{{formattedEndTime}}" name="endTime" class="form-control mb-3" placeholder="종료 시간">
+        <p><img src="/images/ad/{{originFileName}}" class="ad-img" style="box-shadow: 2px 2px 5px #d0ccc9">
+        </p>
+            <button type="submit" class="btn btn-danger" onclick="return confirm('정말 수정하시겠습니까?');">수정</button>
+        </form>
+    </div>
+    {{/ad}}
+</div>
+<script>
+    function validateDates() {
+      const startTime = document.getElementById('start_time').value;
+      const endTime = document.getElementById('end_time').value;
+
+      if (startTime && endTime) {
+          if (new Date(startTime) > new Date(endTime)) {
+              alert('종료 날짜는 시작 날짜보다 뒤여야 합니다.');
+              return false; // 폼 제출을 막음
+          }
+      }
+      return true; // 유효성 검사를 통과하면 폼 제출
+  }
+
+const formattedStartTime = new Date(originalStartTime).toISOString().split('T')[0];
+const formattedEndTime = new Date(originalEndTime).toISOString().split('T')[0];
+</script>

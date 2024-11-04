@@ -1,0 +1,177 @@
+{{> layout/header}}
+
+<style>
+.career-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.career-container div {
+    margin-right: 20px;
+}
+</style>
+
+<h2>프리랜서 정보 등록</h2>
+
+<form id="freelancerForm" action="/freelancer/register" method="post" enctype="multipart/form-data">
+    {{! 기본 정보 }}
+    <div id="basicInfo" class="form-section">
+        <h4>기본 정보</h4>
+        <div>
+            <label for="username">이름</label>
+            <input type="text" id="username" name="username" value="{{username}}" placeholder="이름을 입력하세요" required readonly>
+        </div>
+        <div>
+            <label for="email">이메일</label>
+            <input type="text" id="email" name="email" value="{{email}}" placeholder="이메일을 입력하세요" required readonly>
+        </div>
+        <div>
+            <label for="phoneNumber">연락처</label>
+            <input type="text" id="phoneNumber" name="phoneNumber" value="{{phoneNumber}}" placeholder="연락처를 입력하세요" required readonly>
+        </div>
+        <div>
+            <label for="jobPart">직무 분야</label>
+            <select id="jobPartSelect" name="jobPart" required>
+                <option value="">직무를 선택하세요</option>
+                {{#jobCategories}}
+                    <option value="{{.}}">{{.}}</option>
+                {{/jobCategories}}
+            </select>
+        </div>
+    </div>
+    
+    {{! 근무 방식 }}
+    <div id="workingStyle" class="form-section">
+        <h4>근무 방식</h4>
+        <div>
+            <label for="expectedSalary">희망 연봉</label>
+            <input type="number" id="expectedSalary" name="expectedSalary" maxlength="6" value="0" min="0" max="100000" step="100" required>
+            만
+        </div>
+        <div>
+            <label for="workingStyleInput">근무 방식</label>
+            <select id="workingStyleSelect" name="workingStyle" required>
+                <option value="">근무 방식을 선택하세요</option>
+                {{#workingStyleCategories}}
+                    <option value="{{.}}">{{.}}</option>
+                {{/workingStyleCategories}}
+            </select>
+        </div>
+        <div>
+            <label for="salaryType">급여 방식</label>
+            <select id="salaryTypeSelect" name="salaryType" required>
+                <option value="">급여 방식을 선택하세요</option>
+                {{#salaryTypeCategories}}
+                    <option value="{{.}}">{{.}}</option>
+                {{/salaryTypeCategories}}
+            </select>
+        </div>
+    </div>
+
+    <div id="experience" class="form-section">
+        <h4>경력</h4>
+        <div>
+            <label for="experienceInput">프리랜서 경험</label>
+            <select id="experienceInput" name="experience" required>
+                <option value="">경험을 선택하세요</option>
+                <option value="있음">있음</option>
+                <option value="없음">없음</option>
+            </select>
+        </div>
+        <div class="career-container">
+            <div>
+                <label for="career">경력 직무</label>
+                <select id="career" name="career" required onchange="handleCareerChange()">
+                    <option value="">직무를 선택하세요</option>
+                    {{#careerCategories}}
+                        <option value="{{.}}">{{.}}</option>
+                    {{/careerCategories}}
+                </select>
+            </div>
+            <div id="careerYearContainer" style="display: none;">
+                <input type="number" id="careerYear" name="careerYear" min="1" max="10" required>
+                년
+            </div>
+        </div>
+        <div>
+            <label for="skill">기술 스택</label>
+            <select id="skill" name="skill" required>
+                <option value="">기술 스택을 선택하세요</option>
+                {{#skillCategories}}
+                    <option value="{{.}}">{{.}}</option>
+                {{/skillCategories}}
+            </select>
+        </div>
+    </div>
+
+    <div id="additionalInfo" class="form-section">
+        <h4>추가 정보</h4>
+        <div>
+            <label for="portfolio">포트폴리오</label>
+            <input type="file" id="portfolio" name="mFile">
+        </div>
+        <div>
+            <label for="detail">상세 소개</label>
+            <textarea id="detail" name="detail" placeholder="상세한 자기소개를 입력해주세요." style="width: 100%; height: 150px; resize: none;"></textarea>
+        </div>
+        <div>
+            <label for="link">링크</label>
+            <input type="url" id="link" name="link" placeholder="예: Github, Notion 링크" style="width: 100%;">
+        </div>
+    </div>
+
+    <div>
+        <button type="button" id="prevButton" style="display:none;">이전</button>
+        <button type="button" id="nextButton">다음</button>
+    </div>
+    <div>
+        <button type="submit" id="submitButton">프리랜서 정보 등록</button>
+    </div>
+</form>
+
+<script>
+    let currentSectionIndex = 0; // 현재 섹션 인덱스
+    const sections = document.querySelectorAll('.form-section');
+
+    // 섹션 보이기 함수
+    function showSection(index) {
+        sections.forEach((section, i) => {
+            section.style.display = (i === index) ? 'block' : 'none'; // 현재 섹션만 보이기
+        });
+        document.getElementById('submitButton').style.display = (index === sections.length - 1) ? 'block' : 'none';
+        document.getElementById('nextButton').style.display = (index === sections.length - 1) ? 'none' : 'inline'; // 마지막 섹션일 때는 숨김
+        document.getElementById('prevButton').style.display = (index === 0) ? 'none' : 'inline'; // 첫 섹션일 때는 숨김
+    }
+
+    // 다음 섹션으로 이동
+    document.getElementById('nextButton').addEventListener('click', function() {
+        if (currentSectionIndex < sections.length - 1) {
+            currentSectionIndex++; // 다음 섹션으로 이동
+            showSection(currentSectionIndex);
+        }
+    });
+
+    // 이전 섹션으로 이동
+    document.getElementById('prevButton').addEventListener('click', function() {
+        if (currentSectionIndex > 0) {
+            currentSectionIndex--; // 이전 섹션으로 이동
+            showSection(currentSectionIndex);
+        }
+    });
+
+    // 경력 직무 선택 시 연차 입력 필드 보이기
+    function handleCareerChange() {
+        const careerSelect = document.getElementById('career');
+        const careerYearContainer = document.getElementById('careerYearContainer');
+        if (careerSelect.value) {
+            careerYearContainer.style.display = 'block'; // 선택된 경우 연차 입력 필드 보이기
+        } else {
+            careerYearContainer.style.display = 'none'; // 선택되지 않은 경우 숨기기
+        }
+    }
+
+    // 초기 섹션 표시
+    showSection(currentSectionIndex);
+</script>
+
+{{> layout/footer }}

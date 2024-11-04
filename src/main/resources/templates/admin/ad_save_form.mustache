@@ -1,0 +1,44 @@
+{{> admin/admin_header}}
+
+<div class="container mt-5">
+    <h1>광고 등록</h1>
+    <form action="/admin/ad/save" method="post" enctype="multipart/form-data" onsubmit="return validateDates()">
+        <div class="form-group">
+            <label for="title">제목</label>
+            <input type="text" class="form-control" id="title" name="title" required>
+        </div>
+        <div class="form-group">
+            <label for="origin_file_name">파일 업로드</label>
+            <input type="file" class="form-control-file" id="origin_file_name" name="originFileName" required>
+        </div>
+        <div class="form-group">
+            <label for="start_time">시작 날짜</label>
+            <input type="date" class="form-control" id="start_time" name="startTime" required>
+        </div>
+        <div class="form-group">
+            <label for="end_time">종료 날짜</label>
+            <input type="date" class="form-control" id="end_time" name="endTime" required>
+        </div>
+        <button type="submit" class="btn btn-primary">등록</button>
+    </form>
+</div>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script>
+    function validateDates() {
+        const startTime = document.getElementById('start_time').value;
+        const endTime = document.getElementById('end_time').value;
+
+        if (startTime && endTime) {
+            if (new Date(startTime) > new Date(endTime)) {
+                alert('종료 날짜는 시작 날짜보다 뒤여야 합니다.');
+                return false; // 폼 제출을 막음
+            }
+        }
+        return true; // 유효성 검사를 통과하면 폼 제출
+    }
+</script>
+</body>
+</html>

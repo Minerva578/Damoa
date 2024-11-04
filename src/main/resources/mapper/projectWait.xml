@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.damoa.repository.interfaces.ProjectWaitRepository">
+
+    <select id="isRegistered">
+        select count(*)
+        from project_wait_tb
+        where project_id = #{projectId} and freelancer_id = #{userId}
+    </select>
+
+    <insert id="insertNewRegister">
+        insert into project_wait_tb(project_id, freelancer_id, status)
+        values (#{projectId}, #{userId}, 1)
+    </insert>
+
+    <select id="selectAllWait" resultType="com.damoa.dto.user.ProjectWaitDTO">
+        select t.user_id, u.username as freelancer_name,p.project_id, u.id as freelancer_id
+        from project_wait_tb as p
+        join user_tb as u
+        on p.freelancer_id = u.id
+        join project_tb as t
+        on p.project_id = t.id
+        where t.user_id= #{userId} and p.project_id= #{projectId};
+    </select>
+
+    <select id="selectProjectWaitByFreelancerIdAndProjectId" resultType="com.damoa.dto.user.ProjectWaitDTO">
+        select * from project_wait_tb
+        where freelancer_id = #{freelancerId} and project_id = #{projectId}
+    </select>
+
+    <update id="updateStatusById">
+        update project_wait_tb
+        set status = #{status}
+        where project_id = #{projectId} and freelancer_id = #{freelancerId}
+    </update>
+
+    <select id="selectAllProjectByFreelancerId">
+        select project_id
+        from project_wait_tb
+        where freelancer_id = #{freelancerId}
+        and status = #{status}
+    </select>
+
+    <update id="updateProjectWaitStatus">
+        UPDATE project_wait_tb
+        SET status = #{status}
+        WHERE freelancer_id != #{freelancerId} and project_id = #{projectId}
+    </update>
+
+</mapper>

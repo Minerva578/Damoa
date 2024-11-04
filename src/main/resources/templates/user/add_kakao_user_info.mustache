@@ -1,0 +1,145 @@
+{{> layout/header }}
+
+<div class="container mt-5">
+    <div class="card shadow-sm p-4">
+        <h2 class="text-center mb-4">소셜 로그인 추가 회원 정보 작성</h2>
+        <form action="/user/add-kakao-user-info" method="post" id="signUpForm">
+            <input type="hidden" name="socialType" id="socialType" value="">
+
+            <div class="form-group">
+                <label for="userType">회원 유형 선택</label>
+                <div class="d-flex justify-content-around mt-2">
+                    <button type="button" id="freelancerBtn" class="btn btn-outline-secondary w-100 mx-1">프리랜서</button>
+                    <button type="button" id="companyBtn" class="btn btn-outline-secondary w-100 mx-1">기업</button>
+                </div>
+                <input type="hidden" name="userType" id="userType" value="">
+            </div>
+
+            <div class="form-group mt-3">
+                <label for="username">아이디</label>
+                <input type="text" class="form-control" id="username" name="username" placeholder="아이디를 입력해주세요." required>
+            </div>
+
+            <div class="form-group mt-3">
+                <label for="phoneNumber">휴대폰 번호</label>
+                <input type="text" class="form-control" id="inputPhoneNumber" name="phoneNumber" minlength="11" maxlength="11" placeholder="하이픈(-) 없이 입력해주세요." required>
+                <button type="button" id="sendPhoneNumber" class="btn btn-secondary mt-2 w-100">인증번호 발송</button>
+            </div>
+
+            <div class="form-group mt-3">
+                <label for="inputCertifiedNumber">인증번호</label>
+                <input type="text" class="form-control" id="inputCertifiedNumber" maxlength="4" name="certifiedNumber" placeholder="인증번호를 입력해주세요." required>
+                <button type="button" id="checkBtn" class="btn btn-secondary mt-2 w-100">인증번호 확인</button>
+            </div>
+
+            <button type="submit" id="signUpBtn" class="btn btn-primary btn-block mt-4">회원가입</button>
+        </form>
+    </div>
+</div>
+
+<script>
+// 스타일 및 폼 동작 제어 스크립트
+let isPhoneNumberVerified = false;
+let sentCertificationCode;
+
+function resetButtonStyles() {
+    document.getElementById('freelancerBtn').classList.remove('btn-primary', 'text-white');
+    document.getElementById('freelancerBtn').classList.add('btn-outline-secondary');
+    
+    document.getElementById('companyBtn').classList.remove('btn-primary', 'text-white');
+    document.getElementById('companyBtn').classList.add('btn-outline-secondary');
+}
+
+document.getElementById('freelancerBtn').addEventListener('click', function() {
+    document.getElementById('userType').value = 'freelancer';
+    Swal.fire('프리랜서로 설정되었습니다.');
+    resetButtonStyles();
+    document.getElementById('freelancerBtn').classList.add('btn-primary', 'text-white');
+});
+
+document.getElementById('companyBtn').addEventListener('click', function() {
+    document.getElementById('userType').value = 'company';
+    Swal.fire('기업으로 설정되었습니다.');
+    resetButtonStyles();
+    document.getElementById('companyBtn').classList.add('btn-primary', 'text-white');
+});
+
+document.querySelector('#signUpForm').addEventListener('submit', function(event) {
+    const userType = document.getElementById('userType').value;
+    
+    if (!userType) {
+        event.preventDefault();
+        Swal.fire({
+            icon: 'error',
+            title: '회원 유형 미선택',
+            text: '프리랜서 또는 기업 중 하나를 선택해 주세요.'
+        });
+    }
+    
+    if (!isPhoneNumberVerified) {
+        event.preventDefault();
+        alert('휴대폰 인증이 완료되지 않았습니다. 인증을 완료해 주세요.');
+    }
+});
+
+$('#sendPhoneNumber').click(function() {
+    let phoneNumber = $('#inputPhoneNumber').val();
+
+    if (phoneNumber.length !== 11) {
+        Swal.fire({
+            icon: 'error',
+            title: '휴대폰 번호 입력 오류',
+            text: '휴대폰 번호는 11자리로 입력해주세요.'
+        });
+        return;
+    }
+
+    $.ajax({
+        type: "GET",
+        url: "/user/checkPhoneNumber",
+        data: { phoneNumber: phoneNumber },
+        success: function(response) {
+            if (response.exists) {
+                alert('이 휴대폰 번호는 이미 등록되어 있습니다.');
+            } else {
+                $.ajax({
+                    type: "GET",
+                    url: "/user/sendSms",
+                    data: { phoneNumber: phoneNumber },
+                    success: function(res) {
+                        sentCertificationCode = res;
+                        Swal.fire('인증번호 발송 완료!');
+                    },
+                    error: function() {
+                        alert('인증번호 발송 중 오류가 발생했습니다.');
+                    }
+                });
+            }
+        },
+        error: function() {
+            alert('전화번호 확인 중 오류가 발생했습니다.');
+        }
+    });
+});
+
+$('#checkBtn').click(function() {
+    if (sentCertificationCode === $('#inputCertifiedNumber').val().trim()) {
+        Swal.fire('인증성공!', '휴대폰 인증이 정상적으로 완료되었습니다.', 'success');
+        isPhoneNumberVerified = true;
+
+        $.ajax({
+            type: "GET",
+            url: "/update/phone",
+            data: { phoneNumber: $('#inputPhoneNumber').val() }
+        });
+    } else {
+        Swal.fire({
+            icon: 'error',
+            title: '인증오류',
+            text: '인증번호가 올바르지 않습니다!'
+        });
+    }
+});
+</script>
+
+{{> layout/footer }}

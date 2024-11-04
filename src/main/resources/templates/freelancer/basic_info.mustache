@@ -1,0 +1,71 @@
+{{> layout/header}}
+
+<div class="container">
+    <!-- 사이드바 -->
+{{> layout/mypage}}
+
+    <!-- 메인 콘텐츠 -->
+    <div class="main-content">
+
+        <h1 class="text-center mb-4 font-weight-bold">프리랜서 정보</h1>
+
+        <div class="main-board">
+            <!-- 직무 정보 -->
+            <div class="card mb-4 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title font-weight-bold">직무 정보</h5>
+                    {{#freelancer.jobPart}}
+                    <p class="card-text">
+                        <strong>직무:</strong> {{freelancer.jobPart}} <br>
+                        <strong>근무 방식:</strong> {{freelancer.workingStyle}} <br>
+                        <strong>희망 연봉:</strong> {{freelancer.expectedSalary}} 만 원 <br>
+                        <strong>급여 방식:</strong> {{freelancer.salaryType}}
+                    </p>
+                    {{/freelancer.jobPart}}
+                    {{^freelancer.jobPart}}
+                    <p class="card-text text-muted">등록된 직무 정보가 없습니다.</p>
+                    {{/freelancer.jobPart}}
+                </div>
+            </div>
+
+            <!-- 상세 소개 -->
+            <div class="card mb-4 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title font-weight-bold">상세 소개</h5>
+                    {{#freelancer.detail}}
+                    <p class="card-text">{{freelancer.detail}}</p>
+                    {{/freelancer.detail}}
+                    {{^freelancer.detail}}
+                    <p class="card-text text-muted">등록된 상세 소개가 없습니다.</p>
+                    {{/freelancer.detail}}
+                </div>
+            </div>
+
+            <!-- 포트폴리오 링크 -->
+            <div class="card mb-4 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title font-weight-bold">포트폴리오 및 링크</h5>
+                    {{#freelancer.link}}
+                    <p class="card-text">
+                        <a href="{{freelancer.link}}" target="_blank" class="text-primary">{{freelancer.link}}</a>
+                    </p>
+                    {{/freelancer.link}}
+                    {{^freelancer.link}}
+                    <p class="card-text text-muted">등록된 포트폴리오 링크가 없습니다.</p>
+                    {{/freelancer.link}}
+                </div>
+            </div>
+
+            <div class="text-center">
+                {{#freelancer.jobPart}}
+                <a href="/freelancer/update-basic-info" class="btn btn-primary btn-lg">정보 수정</a>
+                {{/freelancer.jobPart}}
+                {{^freelancer.jobPart}}
+                <a href="/freelancer/insert-basic-info" class="btn btn-success btn-lg">등록하기</a>
+                {{/freelancer.jobPart}}
+            </div>
+        </div>
+    </div>
+</div>
+
+{{> layout/footer}}

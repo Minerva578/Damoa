@@ -1,0 +1,22 @@
+{{>admin/admin_header}}
+
+<div class="main-board">
+    <div class="first-title-div">
+        <h3 class="sub-title" >FAQ</h3>
+    </div>&nbsp;
+    {{#faq}}
+        <h4>{{title}}</h4>
+        <p><strong>등록일:</strong> {{createdAt}}</p>
+        <hr>
+        <p>{{content}}</p>
+        <button onclick="location.href='/faq/list'" class="btn btn-primary">목록으로 돌아가기</button>
+        <button onclick="location.href='/faq/update/{{id}}'" class="btn btn-primary">수정</button>
+        <form action="/faq/delete/{{id}}" method="post" style="display:inline;">
+            <input type="hidden" name="id" value="{{id}}">
+            <button type="submit" class="btn btn-danger">삭제</button>
+        </form>    {{/faq}}
+</div>
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>

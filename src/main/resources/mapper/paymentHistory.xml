@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.damoa.repository.interfaces.PaymentHistoryRepository">
+    <!-- 데이터베이스에 결제내역 추가하기-->
+    <insert id="insertTossHistory">
+        INSERT INTO toss_history_tb(payment_key, user_id, order_id, order_name, amount, method, requested_at,
+        approved_at)
+        VALUES (#{paymentKey}, #{userId}, #{orderId}, #{orderName}, #{amount}, #{method}, #{requestedAt}, #{approvedAt})
+    </insert>
+
+    <!-- 모든 결제내역 가져오기 -->
+    <select id="viewAll" resultType="com.damoa.dto.TossHistoryDTO">
+        SELECT * FROM toss_history_tb
+        ORDER BY requested_at DESC
+        LIMIT #{pageSize} OFFSET #{offset}
+    </select>
+
+    <!-- 환불 요청을 했거나 환불 처리가 된 내역들 가져오기-->
+    <select id="findHistoryByStatus" resultType="com.damoa.dto.TossHistoryDTO">
+        SELECT * FROM toss_history_tb WHERE status > 0
+        ORDER BY requested_at DESC
+        LIMIT #{pageSize} OFFSET #{offset}
+    </select>
+
+    <!-- id로 토스 내역 다 찾기 -->
+    <select id="findById" resultType="com.damoa.dto.TossHistoryDTO">
+        SELECT * FROM toss_history_tb WHERE id = #{id}
+    </select>
+
+
+    <!-- 결제후 유저 포인트 업데이트 해주기 -->
+    <update id="updateUserPoint">
+        UPDATE user_tb SET point = #{amount} WHERE id = #{userId}
+    </update>
+
+    <!-- id로 현재 보유중인 포인트 찾기-->
+    <select id="findPointById" resultType="int">
+        SELECT point FROM user_tb WHERE id = #{userId}
+    </select>
+
+    <!-- 환불한 내역 데이터베이스에 넣어주기-->
+    <insert id="insertCancelHistory">
+        INSERT INTO cancel_toss_history_tb(payment_key, user_id, order_id, order_name, amount, method, requested_at,
+        approved_at, cancel_at)
+        VALUES(#{paymentKey}, #{userId}, #{orderId}, #{orderName}, #{amount}, #{method}, #{requestedAt}, #{approvedAt},
+        now())
+    </insert>
+
+    <!-- 스테이터스 2로 만들어서 환불완료 처리해주기 -->
+    <update id="updateHistoryStatus">
+        UPDATE toss_history_tb SET status = 2 WHERE id = #{id}
+    </update>
+
+    <!-- 모든 결제 리스트 카운트-->
+    <select id="countAll" resultType="int">
+        SELECT COUNT(*) FROM toss_history_tb
+
+    </select>
+
+    <!-- 모든 결제 리스트 카운트-->
+    <select id="countRequestedRefund" resultType="int">
+        SELECT COUNT(*) FROM toss_history_tb
+        WHERE status > 0
+    </select>
+
+
+</mapper>

@@ -1,0 +1,79 @@
+{{> admin/admin_header}}
+
+<div class="main-board">
+    <h3 class="sub-title" >Freelancer Review</h3>
+
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead>
+            <tr>
+                <th>사용자 이름</th>
+                <th>프로젝트 이름</th>
+                <th>전체 점수</th>
+                <th>응답</th>
+                <th>상세 보기</th>
+            </tr>
+            </thead>
+            <tbody>
+            {{#reviewList}}
+                <tr>
+                    <td>{{username}}</td>
+                    <td>{{projectName}}</td>
+                    <td>{{overallScore}}</td>
+                    <td>{{responseData}}</td>
+                    <td>
+                        <a href="/admin/list/freelancer/detail/{{id}}" class="btn btn-primary">리뷰 상세 보기</a>
+                    </td>
+                </tr>
+            {{/reviewList}}
+            {{^reviewList}}
+                <tr>
+                    <td colspan="5" class="text-center">
+                        <div class="alert alert-warning" role="alert">
+                            리뷰가 없습니다.
+                        </div>
+                    </td>
+                </tr>
+            {{/reviewList}}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 페이지네이션 -->
+    <nav aria-label="Page navigation">
+        <ul class="pagination" id="paginationContainer">
+            {{#prevPage}} <!-- 이전 페이지가 있을 때 -->
+                <li class="page-item">
+                    <a class="page-link" href="?page={{prevPage}}" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+            {{/prevPage}}
+
+            <!-- 페이지 번호 표시 -->
+            <script>
+                const totalPages = {{totalPages}}; // 전체 페이지 수
+                const currentPage = {{currentPage}}; // 현재 페이지 (0-based)
+                const paginationContainer = document.getElementById("paginationContainer");
+
+                // 페이지 번호 링크 생성
+                for (let i = 0; i < totalPages; i++) {
+                    const pageItem = document.createElement("li");
+                    pageItem.className = "page-item" + (i === currentPage ? " active" : ""); // 현재 페이지에 active 클래스 추가
+                    pageItem.innerHTML = `<a class="page-link" href="?page=${i}">${i + 1}</a>`;
+                    paginationContainer.appendChild(pageItem);
+                }
+
+                // 다음 페이지 링크
+                {{#nextPage}}
+                    const nextPageItem = document.createElement("li");
+                    nextPageItem.className = "page-item";
+                    nextPageItem.innerHTML = `<a class="page-link" href="?page={{nextPage}}">다음</a>`;
+                    paginationContainer.appendChild(nextPageItem);
+                {{/nextPage}}
+
+
+            </script>
+        </ul>
+    </nav>
+</div>

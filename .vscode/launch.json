@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-DamoaApplication<damoa>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.damoa.DamoaApplication",
+            "projectName": "damoa",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}

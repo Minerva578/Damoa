@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+        namespace="com.damoa.repository.interfaces.ProjectRepository">
+    <insert id="insertProject">
+        INSERT INTO project_tb (
+        user_id, job, min_years, max_years, project_name,
+        project_start, expected_period, period,
+        salary_type, working_style, meeting, address,
+        worktime, work_adjust, vacation, progress,
+        main_tasks, detail_task, delivered, files,
+        company, manager_name, contact, email, agree
+        ) VALUES (
+        #{userId}, #{job},  #{minYears}, #{maxYears},#{projectName},
+        #{projectStart}, #{expectedPeriod}, #{period},
+        #{salaryType}, #{workingStyle}, #{meeting}, #{address},
+        #{worktime}, #{workAdjust}, #{vacation}, #{progress},
+        #{mainTasks}, #{detailTask}, #{delivered}, #{files},
+        #{company}, #{managerName}, #{contact}, #{email}, #{agree}
+        )
+    </insert>
+
+    <select id="getAllProject"  parameterType="com.damoa.repository.model.Project">
+        select * from project_tb
+        where status = 1
+    </select>
+
+    <select id="getProjectForPaging"  parameterType="com.damoa.repository.model.Project">
+        SELECT * FROM project_tb
+        WHERE status = 1
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="getProjectById"  parameterType="com.damoa.repository.model.Project">
+        select * from project_tb where id = #{projectId}
+    </select>
+
+    <insert id="addNewWait"  parameterType="com.damoa.repository.model.ProjectWait">
+        INSERT INTO project_wait_tb (project_id, user_id, introduce, minimum_wage, maximum_wage, start_date,
+        origin_file_name, upload_file_name, detail)
+        VALUES (#{projectId}, #{userId}, #{introduce}, #{minimumWage}, #{maximumWage}, #{startDate},
+        #{originFileName}, #{uploadFileName}, #{detail})
+    </insert>
+
+    <!-- 월별 프로젝트 등록 수 -->
+    <select id="getMonthlyProjectData" resultType="com.damoa.dto.MonthlyProjectDTO">
+        SELECT DATE_FORMAT(project_start, '%Y-%m') AS month, COUNT(*) AS count
+        FROM project_tb
+        GROUP BY DATE_FORMAT(project_start, '%Y-%m')
+    </select>
+
+    <select id="selectProjectByName" resultType="com.damoa.repository.model.Project">
+        SELECT * FROM project_tb WHERE project_name LIKE CONCAT('%', #{keyword}, '%');
+    </select>
+
+    <select id="getProjectForPagingForMyPage" parameterType="com.damoa.repository.model.Project">
+        SELECT * FROM project_tb
+        WHERE status = 1 and user_id =#{userId}
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="getProjectForPagingForMyPage2" parameterType="com.damoa.repository.model.Project">
+        SELECT * FROM project_tb
+        WHERE status = 2 and user_id =#{userId}
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="selectProjectForSelect" parameterType="com.damoa.dto.user.SelectDTO" resultType="com.damoa.repository.model.Project">
+        SELECT * FROM project_tb
+        <where>
+            <if test="selectDTO.workType != null and selectDTO.workType != '0'">
+                AND working_style = #{selectDTO.workType}
+            </if>
+            <if test="selectDTO.address != null and selectDTO.address != '0'">
+                AND address = #{selectDTO.address}
+            </if>
+            <if test="selectDTO.progress != null and selectDTO.progress != '0'">
+                AND progress = #{selectDTO.progress}
+            </if>
+        </where>
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="selectProjectIdByUserId">
+        select id
+        from project_tb
+        where user_id = #{user_id}
+        order by created_at desc
+        limit 1
+    </select>
+
+    <update id="updateStatusById">
+        update project_tb
+        set status = 2
+        where id = #{id}
+    </update>
+
+</mapper>

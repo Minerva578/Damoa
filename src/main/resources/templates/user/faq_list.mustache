@@ -1,0 +1,33 @@
+{{>layout/header}}
+
+<div class="container mt-5">
+    <h2 class="mb-4">FAQ 목록</h2>
+    <table class="table table-striped">
+        <thead class="thead-dark">
+        <tr>
+            <th>번호</th>
+            <th>제목</th>
+            <th>등록일</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{#faqList}}
+            <tr>
+                <td>{{id}}</td>
+                <td><a href="/user/faq-detail/{{id}}">{{title}}</a></td>
+                <td>{{createdAt}}</td>
+            </tr>
+        {{/faqList}}
+        {{^faqList}}
+            <tr>
+                <td colspan="5" class="text-center">등록된 FAQ가 없습니다.</td>
+            </tr>
+        {{/faqList}}
+        </tbody>
+    </table>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+{{>layout/footer}}

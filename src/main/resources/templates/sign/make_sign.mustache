@@ -1,0 +1,102 @@
+{{>layout/header}}
+
+<style type="text/css">
+canvas {
+  background: #fff;
+  border: 1px dashed;
+}
+</style>
+
+
+<h1>날인 등록하기</h1>
+<p>마우스 드래그로 그림을 그려보세요</p>
+
+<label for="name">사인 이름:</label>
+<input type="text" id="name" placeholder="이름을 입력하세요" />
+
+<button id="saveButton">Save</button>
+<button onclick="clearCanvas()">Clear Canvas</button>
+<p></p>
+<canvas width="150" height="100"></canvas>
+{{>layout/footer}}
+
+
+
+
+<script>
+    // 캔버스 및 2D 컨텍스트 설정
+    const canvas = document.querySelector('canvas');
+    const c = canvas.getContext('2d');
+    c.fillStyle = 'black';
+
+    // 드로잉 상태 및 마지막 위치 변수
+    let isDrawing = false;
+    let lastX = 0;
+    let lastY = 0;
+
+    // 점 그리기 함수
+    function draw(x, y) {
+        c.beginPath();
+        c.arc(x, y, 0.5, 0, Math.PI * 2); // 원의 반지름을 0.5로 설정
+        c.closePath();
+        c.fill();
+    }
+
+    // 마우스 클릭 시작
+    canvas.addEventListener('mousedown', (event) => {
+        isDrawing = true;
+        lastX = event.offsetX;
+        lastY = event.offsetY;
+    });
+
+    // 마우스 이동 이벤트
+    canvas.addEventListener('mousemove', (event) => {
+        if (isDrawing) {
+            const currentX = event.offsetX;
+            const currentY = event.offsetY;
+
+            // 현재 위치와 마지막 위치 사이의 거리 계산
+            const distance = Math.hypot(currentX - lastX, currentY - lastY);
+            const steps = Math.ceil(distance / 1); // 1픽셀마다 점을 찍도록 설정
+
+            // 선 그리기
+            for (let i = 0; i < steps; i++) {
+                const x = lastX + (currentX - lastX) * (i / steps);
+                const y = lastY + (currentY - lastY) * (i / steps);
+                draw(x, y);
+            }
+
+            // 마지막 점 업데이트
+            lastX = currentX;
+            lastY = currentY;
+        }
+    });
+
+    // 마우스 클릭 종료
+    canvas.addEventListener('mouseup', () => {
+        isDrawing = false;
+    });
+
+    // 캔버스 지우기 함수
+    function clearCanvas() {
+        c.clearRect(0, 0, canvas.width, canvas.height);
+    }
+    // 저장 기능
+    document.getElementById('saveButton').addEventListener('click', async () => {
+        const dataURL = canvas.toDataURL('image/png');
+        const name = document.getElementById('name').value; // 사인 이름 가져오기
+
+        const response = await fetch('/sign', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ image: dataURL, name: name }), // 이름 추가
+        });
+
+        if (response) {
+            alert('이미지가 성공적으로 저장되었습니다.');
+        }
+    });
+
+</script>

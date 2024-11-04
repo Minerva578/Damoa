@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Basic Contract</title>
+    <style type="text/css">
+    </style>
+</head>
+<body>
+<div class="contract-container">
+    <div class="title">
+        표준 근로 계약서 (상용 근로 계약서)
+    </div>
+    <div>
+        <div>
+            <p>{{companyName}}</p> (이하 "사업주" 라 함)과(와) <p>{{freelancerName}}</p>(이하 "근로자"라 함)
+            은 다음과 같이 근로계약을 체결한다.
+        </div>
+        <div>1. 근로개시일: {{year}}년 {{month}}월 {{day}}일부터</div>
+        <div>2. 근무장소: {{place}}</div>
+        <div>3. 업무의 내용: {{work}}</div>
+        <div>4. 소정 근로 시간: {{startHour}}시 {{startMinute}}부터 {{finishHour}}시 {{finishMinute}}까지 </div>
+        <div>(휴게 시간: {{startRestHour}}시 {{startRestMinute}}분부터 {{finishRestHour}}시 {{finishRestMinute}}분까지</div>
+        <div>5. 근무일/휴일: 매주 {{workDayNum}}일 근무, 주휴일 매주 {{restDays}}요일</div>
+        <div>6. 임금</div>
+        <div>-월(일,시간)급:{{hourMoney}}원</div>
+        <div>-임금지급일: 매월(매주 또는 매일) {{salaryDay}}일 (휴일의 경우는 전일 지급)</div>
+        <div>-지급 방법: 근로자에게 직접 지급({{directSalary}}) 근로자 명의 예금통장에 입금({{bankSalary}})</div>
+        <div>7. 연차 유급 휴가</div>
+        <div>-연차 유급 휴가는 근로 기준법에서 정하는 바에 따라 부여함</div>
+        <div>8. 사회 보험 적용 여부 (해당 란에 체크)</div>
+        <div>{{goyong}} 고용보험 {{sanjae}} 산재 보험 {{gookmin}} 국민 보험 {{gungang}} 건강 보험</div>
+        <div>9. 근로 계약서 교부</div>
+        <div>- 사업주는 근로 계약을 체결함과 동시에 본 계약서를 사본하여 근로자의 교부 요구와 관계 없이 근로자에게 교부함 (근로기준법 제 17조 이행)</div>
+        <div>10. 근로계약, 취업규칙 등의 성실한 이행의무</div>
+        <div>- 사업주와 근로자는 각자가 근로계약, 취업규칙, 단체협약을 지키고 성실하게 이행하여야 함</div>
+        <div>11. 기타 </div>
+        <div>- 이 계약에 정함이 없는 사항은 근로 기준법령에 의함</div>
+        <div>{{createdYear}}년 {{createdMonth}}월 {{createdDay}}일</div>
+    </div>
+    <div>(사업주) 사업체명: {{companyName}}   (전화: {{companyPhoneNumber}})</div>
+    <div>주소: {{companyAddress}}</div>
+    <div>
+        <div>대표자: {{companyOwner}}</div>
+        <div>(서명) <img src={{companySign}}></div>
+    </div>
+    <div>(근로자) 주소: {{companyName}}</div>
+    <div>연락처: {{companyAddress}}</div>
+    <div>
+        <div>성명: {{companyOwner}}</div>
+        <div>(서명) <img src={{companySign}}></div>
+    </div>
+</div>
+</body>

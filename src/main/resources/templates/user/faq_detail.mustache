@@ -1,0 +1,16 @@
+{{>layout/header}}
+
+<div class="container mt-5">
+    {{#faq}}
+    <h4>{{title}}</h4>
+    <p><strong>등록일:</strong> {{createdAt}}</p>
+    <hr>
+    <p>{{content}}</p>
+        <button onclick="location.href='/user/faq'" class="btn btn-primary">목록으로 돌아가기</button>
+    {{/faq}}
+</div>
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+{{>layout/footer}}

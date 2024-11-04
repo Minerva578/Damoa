@@ -1,0 +1,253 @@
+{{>layout/header}}
+<style type="text/css">
+    .project-detail {
+        margin-bottom: 60px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+    .wait-form {
+        display: none;
+        background: white;
+        border: none;
+        border-radius: 5px;
+        padding: 10px;
+    }
+    .wait-detail {
+        margin: 10px;
+        padding: 30px;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+    }
+    .project-box {
+        width: 90%;
+    }
+    .project-input-form {
+        margin: 5px;
+    }
+    .main-title-box {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start; /* 왼쪽 정렬 */
+    }
+    .each-project {
+        width: 80%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+</style>
+<div class="project-detail">
+    <div style="position: relative; width: 1100px;">
+        <img src="/images/logos/sample-img-bigger.png" style="cursor:pointer; width: 1050px; border-radius: 15px;">
+        <img src="/images/logos/annonymus_com.png" style="position: absolute; top: 100%; left: 14%; height: 150px; transform: translate(-50%, -50%);">
+    </div>
+    {{#project}}
+        <div id="each-project" style="margin-top:60px; display: flex; width: 95%;">
+            <div class="explanation" style="margin-left:70px;">
+                <div class="main-title-box" style="height: 40px; margin-top: 40px; margin-bottom:70px;">
+                    <h3 style="margin-bottom: 10px; text-align: left;"><b>{{projectName}}</b></h3>
+                    <p style="margin-bottom: 30px;">{{company}}</p>
+                </div>
+
+                <div style="margin-top:40px; display: flex; width: 90%;">
+                    {{#skill}}
+                        <div style="padding: 10px; border-radius: 10px; display: flex; margin: 0px 5px; background: #f1f3f5;">
+                            #{{.}}
+                        </div>
+                    {{/skill}}
+                </div>
+                <hr style="margin-bottom: 15px;">
+                <div class="main-title-box" style="margin-top:40px; width: 90%; margin-bottom: 50px;">
+                    <h4 style="margin-bottom: 20px;"><b>기본 정보</b></h4>
+                    <p style="margin:5px 0px;"><b>프로젝트 시작일 : </b> {{projectStart}} 예상 기간: {{period}}</p>
+                    <p style="margin:5px 0px;"><b>지급 방식 : </b> {{workingStyle}}</p>
+                    <p style="margin:5px 0px;"><b>근무 방식 : </b> {{workingStyle}}</p>
+                    <p style="margin:5px 0px;"><b>미팅 방식 : </b> {{meeting}}</p>
+                    <p style="margin:5px 0px;"><b>작성일 : </b> {{createdAt}}</p>
+                </div>
+                <hr>
+                <div class="main-title-box" style="margin-top:40px; width: 90%; margin-bottom: 50px;">
+                    <h5 style="margin-bottom: 20px; margin-left:0px;"><b>세부 사항</b></h5>
+                    <div style="display: flex; flex-direction: column; align-items: flex-start; margin-bottom: 20px;">
+                        <h6>주요 업무</h6>
+                        <p>{{mainTasks}}</p>
+                    </div>
+                    <div style="display: flex; flex-direction: column; align-items: flex-start; margin-bottom: 20px;">
+                        <h6>세부 사항</h6>
+                        <p>{{detailTask}}</p>
+                    </div>
+                    <div style="display: flex; flex-direction: column; align-items: flex-start; margin-bottom: 20px;">
+                        <h6>전달 사항</h6>
+                        <p>{{delivered}}</p>
+                    </div>
+                    <div style="display: flex; flex-direction: column; align-items: flex-start; margin-bottom: 20px;">
+                        <h6>담당자 정보</h6>
+                        <p>담당자 : {{managerName}}</p>
+                        <p>연락처 : {{contact}}</p>
+                        <p>이메일 : {{email}}</p>
+                    </div>
+                    <div style="display: flex; flex-direction: column; align-items: flex-start; margin-bottom: 20px;">
+                        <h6>작성일</h6>
+                        <p>{{createdAt}}</p>
+                    </div>
+                </div>
+            </div>
+            <div style="margin-top:40px;">
+                <button class="btn btn-primary" id="chatRequestButton" style="width: 200px; margin: 5px;">1:1 채팅하기</button>
+                <button class="btn btn-secondary" style="width: 200px; margin: 5px;" onclick="location.href='/project/list/1'">목록으로 돌아가기</button>
+                <div class="owner-var" id="make-wait-btn" style="display: block;">
+                    <button type="button" id="register-matching" class="btn btn-secondary" onclick="makeNewWaitList()">매칭 신청하기</button>
+                </div>
+                <div id="finished-project" class="wait-list">
+                </div>
+            </div>
+        </div>
+    {{/project}}
+</div>
+
+
+<script>
+    document.getElementById('chatRequestButton').addEventListener('click', function(){
+        const sessionId = "{{#session.id}}{{session.id}}{{/session.id}}{{^session.id}}null{{/session.id}}"; // 현재 로그인 된 사용자 ID
+        const companyId = "{{projectInfo.userId}}"; // 기업 ID
+
+        if (sessionId === "null") {
+            alert("로그인 후 신청가능합니다.");
+            return;
+        }
+
+        const confirmation = confirm("채팅 신청을 보내시겠습니까?");
+        if (confirmation) {
+            fetch(`/match/chat-request?senderId=${sessionId}&receiverId=${companyId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.text())
+            .then(message => {
+                alert(message);
+                window.location.href = '/main';
+            });
+        }
+    });
+
+    const sessionId = "{{#session.id}}{{session.id}}{{/session.id}}{{^session.id}}null{{/session.id}}"; // 현재 로그인 된 사용자 ID
+    const userId = "{{project.id}}"; // 기업 ID
+    const companyId = "{{projectInfo.userId}}"; // 기업 ID
+
+
+    var projectManage = document.createElement('div');
+    projectManage.innerHTML = `
+        <button class="btn btn-primary" onclick="deleteProject()">삭제</button>
+        <button class="btn btn-primary" onclick="showWaitList()">공고 마감</button>
+    `;
+
+    var selectMatching = document.createElement('div');
+    selectMatching.innerHTML = `
+         <form action="/project/finish-project" method="POST">
+                        <h2 >공고 마감하기</h2>
+                         {{#waitList}}
+                        <input type="hidden" name="projectId" value={{projectId}}>
+                        <input type="hidden" name="userId" value={{userId}}>
+                        <input type="hidden" name="freelancerId" value={{freelancerId}}>
+                            <input type="radio" name="freelancerName" value={{freelancerName}}>{{freelancerName}}</input>
+    {{/waitList}}
+    <button type="submit" class="submit-finish-btn">제출하기</button>
+</form>
+`;
+
+var buttonContainer = document.querySelector('#register-matching');
+var finishButton = document.querySelector('#finished-project'); // 올바른 선택자인지 확인
+var waitBtn = document.querySelector('#make-wait-btn');
+
+function showOwnerMenu(sessionId, companyId) {
+if (sessionId !== "null" && companyId == sessionId) {
+console.log("소유자 메뉴 표시");
+finishButton.appendChild(projectManage);
+} else {
+waitBtn.style.display = 'block';
+}
+}
+showOwnerMenu(sessionId,companyId);
+
+function sendWaitMake(userId, projectId) {
+fetch('/project/make-new-wait', {
+method: 'POST',
+headers: {
+'Content-Type': 'application/json',
+},
+body: JSON.stringify({ userId: userId, projectId: projectId }),
+})
+.then(response => {
+if (!response.ok) {
+throw new Error('Network response was not ok');
+}
+return response.json(); // JSON 형식으로 변환
+})
+.then(data => {
+if (data.result === 0) {
+alert('대기 신청이 완료되었습니다.');
+} else if (data.result === 1) {
+alert('이미 신청한 프로젝트입니다.');
+}
+})
+.catch(error => {
+console.error('신청 중 오류가 발생했습니다:', error);
+alert('신청 중 오류가 발생했습니다: ' + error.message);
+});
+}
+
+
+function makeNewWaitList(){
+if (sessionId === "null") {
+alert("로그인 후 신청가능합니다.");
+return;
+} else {
+const confirmation = confirm("매칭 신청을 하시겠습니까?");
+if (confirmation) {
+sendWaitMake(sessionId, companyId);
+} else {
+console.log("신청이 취소되었습니다.");
+}
+}
+}
+
+function showWaitList() {
+    // finishButton에서 selectMatching을 찾아서 보여주거나 숨깁니다.
+    if (finishButton.contains(selectMatching)) {
+        // 이미 있는 경우, 숨기기
+        finishButton.removeChild(selectMatching);
+    } else {
+        // 없는 경우, 추가하고 보여주기
+        finishButton.appendChild(selectMatching);
+    }
+}
+
+
+    document.querySelector('.submit-finish-btn').addEventListener('click', function(event) {
+        const selectedRadio = document.querySelector('input[name="freelancerName"]:checked');
+
+        if (!selectedRadio) {
+            fetch('/project/finish-project', {
+                method: 'POST',
+                headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ projectId: projectId }),
+        })
+        .then(response => {
+        alert('프로젝트가 마감되었습니다.');
+        })
+        }
+    });
+
+    function deleteProject(){
+
+    }
+
+</script>
+{{>layout/footer}}

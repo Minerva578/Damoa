@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Damoa</title>
+
+<!-- css -->
+<style type="text/css">
+    body {
+        padding: 0;
+        margin: 0;
+        width: 100%;
+        height: 100vh;
+        background: #f0f2f5;
+        font-family: Arial, sans-serif;
+        display: flex;
+    }
+
+    /* 메인 레이아웃 */
+    .main {
+        display: flex;
+        width: 100%;
+        height: 100%;
+    }
+
+    /* 사이드바 스타일 */
+
+
+    /* 메인 콘텐츠 */
+    .main-board {
+        width: 83%;
+        padding: 30px;
+        background: white;
+        overflow-y: auto;
+    }
+
+    /* 헤더 스타일 */
+    .first-title-div {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 50px;
+        padding: 0 20px;
+        background: #52b5f3;
+        color: white;
+        border-radius: 10px;
+        box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+    }
+
+    /* 카드 컨테이너 */
+    .row {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 20px;
+    }
+    .first-row-box, .second-row-box {
+        flex: 1;
+        margin: 10px;
+        padding: 20px;
+        background: #ffffff;
+        border-radius: 15px;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    /* 차트 박스 스타일 */
+    canvas {
+        max-height: 200px;
+        margin-top: 15px;
+    }
+
+    /* 버튼 스타일 */
+    button {
+        padding: 10px 20px;
+        font-size: 14px;
+        color: #ffffff;
+        background-color: #07a0c3;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+    button:hover {
+        background-color: #058fa0;
+    }
+</style>
+
+<!-- js libraries -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+
+{{>admin/admin_header}}
+
+<div class="main-board">
+    <h3 class="sub-title" >Admin Dashboard</h3>
+    <div class="main-box">
+        <div class="row">
+            <div class="first-row-box">
+                <h5>Visitors</h5>
+                <hr>
+                <canvas id="visitorsChart"></canvas>
+            </div>
+            <div class="first-row-box">
+                <h5>Number of register</h5>
+                <hr>
+                <canvas id="registerChart"></canvas>
+            </div>
+            <div class="first-row-box">
+                <h5>기업 리뷰 등록 수</h5>
+                <hr>
+                <canvas id="companyReviewChart"></canvas>
+            </div>
+        </div>
+        <hr>
+        <div class="row">
+            <div class="first-row-box">
+                <h5>프리랜서 리뷰 등록 수</h5>
+                <hr>
+                <canvas id="freelancerReviewChart"></canvas>
+            </div>
+            <div class="first-row-box">
+                <h5>월별 프로젝트 등록 수</h5>
+                <hr>
+                <canvas id="projectsChart"></canvas>
+            </div>
+            <div class="first-row-box">
+                <h5>월별 프리랜서 등록 수</h5>
+                <hr>
+                <canvas id="freelancersChart"></canvas>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+<!-- 차트 스크립트 -->
+<script>
+    function loadRegisterData() {
+        $.ajax({
+            url: '/admin/monthly-registers',
+            method: 'GET',
+            success: function(data) {
+
+                var labels = data.map(item => item.month);
+                var registerData = data.map(item => item.count);
+
+                var registerChartCtx = document.getElementById('registerChart').getContext('2d');
+                var registerChart = new Chart(registerChartCtx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: '월별 회원가입 사용자 수',
+                            data: registerData,
+                            backgroundColor: [
+                                'rgba(255, 108, 108, 0.2)',
+                            ],
+                            borderColor: [
+                                'rgba(255, 108, 108, 1)',
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        var label = context.label || '';
+                                        var value = context.raw || 0;
+                                        return `${label}: ${value}명`;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            },
+            error: function(err) {
+                console.error('Error loading register data:', err);
+            }
+        });
+    }
+
+
+
+    function loadVisitorData() {
+        $.ajax({
+            url: '/admin/monthly-visitors',
+            method: 'GET',
+            success: function(data) {
+
+                var labels = data.map(item => item.month);
+                var visitorData = data.map(item => item.count);
+
+                var visitorChartCtx = document.getElementById('visitorsChart').getContext('2d');
+                var visitorChart = new Chart(visitorChartCtx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: '월별 방문자 수',
+                            data: visitorData,
+                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            },
+            error: function(err) {
+                console.error('Error loading visitor data:', err);
+            }
+        });
+    }
+
+    function loadCompanyReviewData() {
+        $.ajax({
+            url: '/admin/daily-company-reviews',
+            method: 'GET',
+            success: function(data) {
+                var labels = data.map(item => item.date);
+                var reviewData = data.map(item => item.count);
+
+                var companyReviewChartCtx = document.getElementById('companyReviewChart').getContext('2d');
+                var companyReviewChart = new Chart(companyReviewChartCtx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: '일별 기업 리뷰 등록 수',
+                            data: reviewData,
+                            backgroundColor: 'rgba(255, 159, 64, 0.2)',
+                            borderColor: 'rgba(255, 159, 64, 1)',
+                            borderWidth: 1,
+                            fill: true,
+                            lineTension: 0.4
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            },
+            error: function(err) {
+                console.error('Error loading company review data:', err);
+            }
+        });
+    }
+
+    function loadFreelancerReviewData() {
+        $.ajax({
+            url: '/admin/daily-freelancer-reviews',
+            method: 'GET',
+            success: function(data) {
+                var labels = data.map(item => item.date);
+                var reviewData = data.map(item => item.count);
+
+                var freelancerReviewChartCtx = document.getElementById('freelancerReviewChart').getContext('2d');
+                var freelancerReviewChart = new Chart(freelancerReviewChartCtx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: '일별 프리랜서 리뷰 등록 수',
+                            data: reviewData,
+                            backgroundColor: 'rgba(120, 198, 83, 0.2)',
+                            borderColor: 'rgba(120, 198, 83, 1)',
+                            borderWidth: 1,
+                            fill: true,
+                            lineTension: 0.4
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            },
+            error: function(err) {
+                console.error('Error loading freelancer review data:', err);
+            }
+        });
+    }
+
+
+    function loadProjectData() {
+        $.ajax({
+            url: '/admin/monthly-projects',
+            method: 'GET',
+            success: function(data) {
+                var labels = data.map(item => item.month);
+                var projectData = data.map(item => item.count);
+
+                var projectChartCtx = document.getElementById('projectsChart').getContext('2d');
+                var projectChart = new Chart(projectChartCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: '월별 프로젝트 등록 수',
+                            data: projectData,
+                            backgroundColor: 'rgba(223, 189, 240, 0.2)',
+                            borderColor: 'rgba(223, 189, 240, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            },
+            error: function(err) {
+                console.error('Error loading project data:', err);
+            }
+        });
+    }
+
+    function loadFreelancerData() {
+        $.ajax({
+            url: '/admin/monthly-freelancers',
+            method: 'GET',
+            success: function(data) {
+                var labels = data.map(item => item.month);
+                var freelancerData = data.map(item => item.count);
+                var freelancerChartCtx = document.getElementById('freelancersChart').getContext('2d');
+                var freelancerChart = new Chart(freelancerChartCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: '월별 프리랜서 등록 수',
+                            data: freelancerData,
+                            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                            borderColor: 'rgba(54, 162, 235, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            },
+            error: function(err) {
+                console.error('Error loading freelancer data:', err);
+            }
+        });
+    }
+
+    $(document).ready(function() {
+        loadVisitorData();
+        loadRegisterData();
+        loadProjectData();
+        loadFreelancerData();
+        loadCompanyReviewData();
+        loadFreelancerReviewData();
+    });
+</script>
+
+
+</body>
+</html>

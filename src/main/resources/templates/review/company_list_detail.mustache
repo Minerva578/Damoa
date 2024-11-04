@@ -1,0 +1,98 @@
+{{> layout/header}}
+
+{{# companyReview}}
+    <div class="container mt-4">
+        <div class="row justify-content-center">
+            <!-- 메인 리뷰 영역 -->
+            <div class="col-md-9">
+                <div class="card shadow-sm mb-4 border-0">
+                    <div class="card-body text-center">
+                        <h5 class="card-title" style="color: #007BFF;">{{freelancerName}}</h5>
+                    </div>
+                </div>
+
+                <!-- 평점 요약 -->
+                <div class="card shadow-sm mb-4 border-0">
+                    <div class="card-body">
+                        <h5 class="card-title" style="color: #007BFF;">상세 리뷰</h5>
+                        <div class="card-text" style="font-weight: bold; margin-bottom: 15px;">
+                            총 리뷰 별점:
+                            <span class="star-rating" id="overallStars"></span>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3 text-center">
+                                만족도
+                                <span class="star-rating" id="workQualityStars"></span>
+                            </div>
+                            <div class="col-md-3 text-center">
+                                개발 일정
+                                <span class="star-rating" id="timelinessStars"></span>
+                            </div>
+                            <div class="col-md-3 text-center">
+                                피드백 반영
+                                <span class="star-rating" id="feedbackStars"></span>
+                            </div>
+                            <div class="col-md-3 text-center">
+                                재계약 의사
+                                <span class="star-rating" id="willingnessStars"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 리뷰 상세 내용 -->
+                <div class="card shadow-sm mb-4 border-0">
+                    <div class="card-body">
+                        <h5 class="card-title" style="color: #007BFF;">리뷰 내용</h5>
+                        <h6 class="mt-3">{{responseData}}</h6>
+                    </div>
+                </div>
+
+                <!-- 리뷰 작성 날짜 -->
+                <div class="card shadow-sm mb-4 border-0">
+                    <div class="card-body text-center">
+                        <small class="text-muted">리뷰 작성일: {{reviewDate}}</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{{/companyReview}}
+
+<script>
+    function renderStars() {
+        const workQualityScore = parseInt("{{companyReview.workQualityScore}}") || 0;
+        const timelinessScore = parseInt("{{companyReview.timelinessScore}}") || 0;
+        const feedbackScore = parseInt("{{companyReview.feedbackScore}}") || 0;
+        const willingnessScore = parseInt("{{companyReview.willingnessScore}}") || 0;
+        const overallScore = parseInt("{{companyReview.overallScore}}") || 0;
+
+        // 각 점수에 대해 별을 생성하는 함수
+        function renderStarsForScore(score) {
+            const totalStars = 5;
+            let starsHtml = '';
+
+            for (let i = 1; i <= totalStars; i++) {
+                if (i <= score) {
+                    starsHtml += '<i class="fas fa-star" style="color: #fbcb1c;"></i>'; // 채워진 어두운 노란색 별
+                } else {
+                    starsHtml += '<i class="far fa-star" style="color: gray;"></i>'; // 빈 회색 별
+                }
+            }
+            return starsHtml;
+        }
+
+        // 별 점수 출력
+        document.getElementById('overallStars').innerHTML = renderStarsForScore(overallScore);
+        document.getElementById('workQualityStars').innerHTML = renderStarsForScore(workQualityScore);
+        document.getElementById('timelinessStars').innerHTML = renderStarsForScore(timelinessScore);
+        document.getElementById('feedbackStars').innerHTML = renderStarsForScore(feedbackScore);
+        document.getElementById('willingnessStars').innerHTML = renderStarsForScore(willingnessScore);
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        renderStars();
+    });
+</script>
+
+{{> layout/footer}}

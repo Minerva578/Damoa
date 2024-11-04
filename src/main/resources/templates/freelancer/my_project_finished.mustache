@@ -1,0 +1,203 @@
+{{> layout/header }}
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #ffffff;
+        margin: 0;
+        padding: 0;
+    }
+
+    .container {
+        display: flex;
+        width: 100%;
+        min-height: 100vh;
+        background-color: #f5f5f5;
+        margin-top: 70px;
+        padding-bottom: 20px;
+    }
+
+    .sidebar {
+        width: 300px;
+        background-color: #fff;
+        padding: 20px;
+        border-right: 1px solid #ddd;
+        box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+        flex-shrink: 0;
+    }
+
+    .sidebar h2 {
+        font-size: 20px;
+        color: #333;
+        margin-bottom: 20px;
+    }
+
+    .sidebar a {
+        display: block;
+        padding: 15px 20px;
+        margin-bottom: 10px;
+        color: #333;
+        text-decoration: none;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+        font-size: 16px;
+    }
+
+    .sidebar a:hover {
+        background-color: #e9ecef;
+        color: #007bff;
+    }
+
+    .content {
+        flex-grow: 1;
+        padding: 40px;
+        background-color: #fff;
+        min-height: 100vh;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .content h1 {
+        font-size: 26px;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+
+    .content h4 {
+        font-size: 24px;
+        margin-bottom: 10px;
+        color: #333;
+    }
+
+    .project-list {
+        margin-bottom: 30px;
+    }
+
+    .project-item {
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        margin-bottom: 10px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .project-item:hover {
+        background-color: #f1f1f1;
+    }
+
+    .project-item h6 {
+        font-size: 20px;
+        margin: 0;
+        color: #333;
+    }
+
+    .actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+    justify-content: center;
+    }
+
+    .btn {
+        padding: 10px 20px;
+        border-radius: 5px;
+        color: white;
+        transition: background-color 0.3s;
+        border: none;
+        cursor: pointer;
+    }
+
+    .btn-detail {
+        background-color: #007bff;
+    }
+
+    .btn-detail:hover {
+        background-color: #2779cf;
+        color: white;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+    }
+
+    .btn-primary:hover {
+        background-color: #0056b3;
+    }
+
+    /* 구매 버튼 스타일 */
+    .purchase--btn {
+        display: inline-block;
+        padding: 10px 20px;
+        font-size: 16px;
+        color: #fff;
+        background-color: #007BFF;
+        text-decoration: none;
+        border-radius: 4px;
+        border: none;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .purchase--btn:hover {
+        background-color: #0056b3;
+    }
+
+    .purchase--btn:active {
+        background-color: #004085;
+    }
+
+    .text-muted {
+        color: #888;
+        text-align: center;
+    }
+</style>
+
+<div class="container">
+    <!-- 사이드바 - 프리랜서 전용 메뉴 -->
+    {{> layout/mypage }}
+    <!-- 메인 컨텐츠 -->
+    <div class="content">
+        <div>
+            <h4>참여한 프로젝트</h4>
+            <div class="project-list">
+                {{#projectList1}}
+                    <div class="project-item" onclick="location.href='/project/detail/{{id}}'">
+                        <h6>{{projectName}}</h6>
+                        <div class="actions">
+                            <button class="btn btn-detail" onclick="location.href='/project/detail/{{id}}'">자세한 정보 보러가기</button>
+                            <button class="btn btn-primary" onclick="confirmReview(event)">리뷰 남기기</button>
+                        </div>
+                    </div>
+                {{/projectList1}}
+            </div>
+
+            <hr>
+
+            <h4>마감된 프로젝트</h4>
+            <div class="project-list">
+                {{#projectList2}}
+                    <div class="project-item" onclick="location.href='/project/detail/{{id}}'">
+                        <h6>{{projectName}}</h6>
+                        <div class="actions">
+                            <button class="btn btn-detail" onclick="location.href='/project/detail/{{id}}'">자세한 정보 보러가기</button>
+                        </div>
+                    </div>
+                {{/projectList2}}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function confirmReview(event) {
+        event.stopPropagation(); // 부모 클릭 이벤트 방지
+
+        const userConfirmed = confirm("리뷰를 작성하시겠습니까?");
+        if (userConfirmed) {
+            location.href = 'https://forms.gle/UnXAgmt1txfja3LFA';
+        }
+    }
+</script>
+
+{{> layout/footer }}

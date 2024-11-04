@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>500 - Internal Server Error</title>
+    <style>
+        body {
+            background-color: #f0f4f8;
+            font-family: Arial, sans-serif;
+            color: #333;
+            text-align: center;
+            padding: 50px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        h1 {
+            font-size: 72px;
+            color: #3498db;
+        }
+        p {
+            font-size: 18px;
+            color: #666;
+        }
+        .error-details {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #eef2f7;
+            border-radius: 5px;
+            color: #444;
+            font-family: monospace;
+            text-align: left;
+        }
+        a {
+            color: #3498db;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .btn {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 10px 20px;
+            background-color: #3498db;
+            color: white;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .btn:hover {
+            background-color: #2980b9;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>500</h1>
+    <p>Oops! Something went wrong on our server.</p>
+    <p>It seems we're experiencing some technical issues.</p>
+    <div class="error-details">
+        <p><strong>Error Details:</strong></p>
+        {{#errorMessage}}
+            <p>{{errorMessage}}</p>
+        {{/errorMessage}}
+    </div>
+    <a href="/main" class="btn">Return to Homepage</a>
+    <p>If the issue persists, please contact the administrator.</p>
+</div>
+</body>
+</html>
